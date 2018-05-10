@@ -69,7 +69,7 @@ https://arxiv.org/abs/1406.1078
 이번 포스팅은 기본적으로 텐서플로우 예제들을 커스터마이징해서 만들었다.
 
 img 94d486f1-cf86-4dd8-824a-0f554dfb3f4b
-</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/94d486f1-cf86-4dd8-824a-0f554dfb3f4b.png.html"><xmp>
+</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/94d486f1-cf86-4dd8-824a-0f554dfb3f4b.png"><xmp>
 
 S2S는 크게 encoder 와 decoder 두 파트로 나뉜다.
 영어를 한국어로 변환하는 기계번역을 예로 들어보겠다.
@@ -111,7 +111,7 @@ output data from decoder : 좋은 아침입니다! <eos>
 @
 우리가 수행할 문제를 정의해보자.
 img 6216f29b-ea91-401f-a9c3-e2f8a8f935c3
-</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/6216f29b-ea91-401f-a9c3-e2f8a8f935c3.png.html"><xmp>
+</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/6216f29b-ea91-401f-a9c3-e2f8a8f935c3.png"><xmp>
 
 그럼 ‘뉴스 제목 생성’을 위 아키텍처에 적용해 보자.
 위 그림처럼 인코더에 뉴스 본문을 넣는다.
@@ -215,7 +215,7 @@ word_to_ix와 ix_to_word에 각각 <PAD>라는 요소를 추가해주고 길이�
 @
 모델 구현
 img 626db30b-7f66-4a2d-8a55-496f80d16e66
-</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/626db30b-7f66-4a2d-8a55-496f80d16e66.png.html"><xmp>
+</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/626db30b-7f66-4a2d-8a55-496f80d16e66.png"><xmp>
 
 내가 사용한 S2S의 디테일한 설정들은 위 그림에 요약돼 있다.
 녹색으로 표시된 은닉층에서는 어떤 cell을 쓸지 선택할 수 있다.
@@ -306,7 +306,7 @@ class seq2seq(object):
 
         이제 학습과 예측 과정을 살펴보겠다. 아래는 이해를 돕기 위한 그림이다.
         img 303573ba-c847-47d1-a62d-a2df949e32a5
-        </xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/303573ba-c847-47d1-a62d-a2df949e32a5.png.html"><xmp>
+        </xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/303573ba-c847-47d1-a62d-a2df949e32a5.png"><xmp>
 
         # models
         if multi:
