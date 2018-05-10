@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 23px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 80px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+    
+    background-color: black;
+    color:#ABBAB7;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+그래프로 중요 기사 걸러내기_180415_17_05.html
+<xmp>
+
+@
+‘그래프’ 로 중요 기사를 걸러내 보도록 한다.
+같은 시간대에 비슷한 제목의 기사가 많으면 중요한 이슈를 다루는 보도일 것이라는 가정이 깔려 있는 분석 방법론이다.
+간단한 방법론이지만 퍼포먼스가 좋아서 유용하게 활용할 수 있다.
+
+@
+하루에도 수천건의 기사가 쏟아진다.
+소비자 입장에선 어떤 기사가 중요하고 그렇지 않은지 알기 어렵다.
+생산자 입장에선 공들여 만든 뉴스가 하루만 지나도 쓸모 없어진다.
+때문에, 생산자든 소비자든 뉴스의 맥락을 짚기가 어려운 비효율적인 부분이 있다.
+‘삼성’ 에 관련된 이슈를 찾아보고 싶다.
+
+지금 벌어지고 있는 이슈는 쉽게 알 수 있지만 과거 이슈는 시간과 노력을 들이지 않으면 알기 어렵다.
+또 ‘공채’, ‘최순실 수사’, ‘삼성전자의 하만 인수’ 등은 시간의 흐름에 따라 진화, 발전하는 이슈이다.
+저는 뉴스 소비자에게 중요한 기사를 걸러 보여주면서도 뉴스의 맥락(context)을 알 수 있게 하면 좋겠다는 생각을 했다.
+이와 관련된 개념이 Structured Journalism 이다.
+
+img 69ef4a56-4e9b-4d10-b8b3-58065baa443e
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/69ef4a56-4e9b-4d10-b8b3-58065baa443e.png.html"><xmp>
+
+@
+Structured Journalism 은 언론학계에 최근 제시되고 있는 개념이다.
+기사 및 기사 속에 내재된 정보를 계속 누적시켜 재맥락화(recontextualize)하려는 노력을 총칭한다.
+위 그림에서처럼 단순 팩트나 기존 기사들을 재조합하여 새로운 가치, 맥락을 만들어보려는 시도이다.
+
+@
+중요기사의 기준
+각자가 중요하다고 생각하는 기사는 저마다 다르다.
+기사 중요도 판단은 어느 정도는 주관적인 영역이라는 것이다.
+그런데 중요 기사의 조건을 아래처럼 양적으로 접근해 보기로 했다.
+
+언론은 특종 경쟁에 매몰돼 있다.
+같은 사실을 보도하더라도 어제와 ‘다른’ 뉴스, 남들과는 ‘차별화한’ 시각을 추구한다.
+그런데 많은 언론사들이 유사한 제목의 비슷한 기사를 보도한다면 해당 사건이나 이슈는,
+사회에 파급력이 클 가능성이 높다.
+바꿔 말해 해당 기사는 차별성을 다소 포기하더라도 보도할 만한 가치가 있는 중요한 아티클이라는 이야기다.
+
+@
+Graph-based News Representation
+모델을 만들어보자. 대전제는 딱 두 줄로 요약된다.
+
+1. 중요한 뉴스라면 모든 언론사가 취급할 것이다
+1. 중요 기사는 제목이나 키워드가 비슷할 것이다
+
+위 두 가지 전제를 모델링하기 위해 그래프(graph)를 써보기로 했다.
+뉴스 제목을 노드(꼭지점)와 엣지(간선)로 표현하는 것이다.
+
+이날 대부분의 신문은 ‘사드’ 관련 기사를 비중있게 보도했다.
+그만큼 중요한 사안이라는 이야기다.
+우선 뉴스 제목을 포스태깅한다.
+그리고 조사 등 불필요한 품사를 제거한다.
+그리고 중복 단어 숫자를 웨이트(가중치)로 하는 무방향 엣지를 연결한다.
+
+img 6abb4951-0aa8-4a8c-9d5d-f759a3a57d79
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/6abb4951-0aa8-4a8c-9d5d-f759a3a57d79.png.html"><xmp>
+
+@
+조선일보 1면 톱기사 ‘사드, 경북 성주에 배치한다’ 는 제목의 노드는,
+경향신문의 1면 톱기사 ‘사드 배치 경북 성주 사실상 결정’ 과 단어 중복수가 4개이다(사드 경북 성주 배치).
+조선일보의 1면 톱기사 제목은 한겨레의 1면 톱기사 ‘외교장관 만류에도 사드 결정 강행했다’ 는 기사와 2개 단어가 겹친다(사드, 하다).
+경향신문과 한겨레 기사의 경우엔 1개(사드)가 겹친다.
+이를 그래프로 그리면 위 그림과 같다.
+단어 중복수를 웨이트로 한 그래프에선 조선일보 ‘사드, 경북 성주에 배치한다’ 가 중심 노드가 될것이다.
+
+그래프 이론에서는 노드의 중요도를 산출하는데 중심성(cetrality) 개념을 제시한다.
+가장 대표적인 것이 간선중심성 (degree centrality) 이다.
+비교적 직관적으로 이해할 수 있다.
+각 노드의 중심성 스코어는 "엣지"에 해당하는 "웨이트"들의 합입니다.
+위의 그림 예시에서 보면 조선일보 1면 톱기사인 ‘사드, 경북 성주에 배치한다’ 는 노드의 간선중심성은 6이다.
+
+@
+또 다른 지표는 고유벡터 중심성 (eigenvector centrality) 를 꼽을 수 있다.
+중요한 노드에 연결된 노드가 중요하다는 관점에서 창안된 개념이다.
+그래프의 엣지로 이뤄진 인접행렬
+(i번째 노드와 j번째 노드가 연결돼 있을 경우 Aij=1, 아닐 경우 0)
+을 고유값 분해(eigenvalue decomposion)를 하여 얻을 수 있다
+http://darkpgmr.tistory.com/105
+이렇게 구해진 i번째 노드의 고유벡터 중심성 점수(Xi)와 그 의미는 다음과 같다. (n=전체 노드 개수)
+
+$$$x_{i}=\frac{1}{\lambda}\sum\limits_{i=1}^{n}A_{ij}x_{j}$$$
+$$$\begin{bmatrix} A_{11}&A_{21}&...&A_{1n}\\A_{21}&A_{22}&...&A_{2n}\\...\\A_{n1}&A_{n2}&...&A_{nn} \end{bmatrix} \begin{bmatrix} x_{1}\\x_{2}\\...\\x_{n} \end{bmatrix}$$$
+$$$=\begin{bmatrix} A_{11}x_{1}&A_{21}x_{2}&...&A_{1n}x_{n}\\A_{21}x_{1}&A_{22}x_{2}&...&A_{2n}x_{n}\\...\\A_{n1}x_{1}&A_{n2}x_{2}&...&A_{nn}x_{n} \end{bmatrix}$$$
+$$$=\begin{bmatrix} \lambda x_{1}\\\lambda x_{2}\\...\\\lambda x_{n} \end{bmatrix}$$$
+
+@
+위 수식과 행렬을 곱씹어 보면,
+i번째 노드의 고유벡터 중심성 점수 (xi) = 자기 자신의 중심성 점수 (xi) + 모든 이웃들의 중심성 스코어 점수
+으로 표현할 수 있다.
+바꿔 말하면 중심성 점수가 높은 중요한 이웃과 연결된 i번째 노드 또한 중심성 점수가 높아지게 된다는 얘기이다.
+반대로 생각하면 i번째 노드가 중요한 노드라면 i번째 노드와 연결된 이웃들의 중심성이 커지게 된다.
+즉 중요한 노드에 연결된 노드가 중요하다는 말이 되는 셈이다.
+
+@
+실험설계 및 결과
+이상 논의한 내용을 바탕으로 뉴스 제목의 중복 단어를 가중치 사용하는 그래프를 구축했다.
+각 노드의 중심성은 간선중심성과 고유벡터중심성 두 가지 지표를 구해 이를 곱하여 모두 고려했다.
+분석 대상은 조선일보, 한겨레 등 10개 주요 조간 매체 10개월치 기사(2016년 1~10월) 20만7729 건 이다.
+위에서 예시로 든 2016년 7월 13일치 결과를 한번 보겠다.
+
+img 8c9d299a-7ae9-4c9d-abc6-c2878a7124ef
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/8c9d299a-7ae9-4c9d-abc6-c2878a7124ef.png.html"><xmp>
+
+위 표에서 degree는 간선중심성, eigen은 고유벡터중심성, result는 이 둘을 곱한 스코어를 뜻한다.
+result 기준으로 정렬해 상위 7개를 뽑았다.
+이날은 ‘사드’가 중요한 이슈였던 모양이다.
+상위 기사에 ‘사드’ 관련 기사가 모두 포진해있다.
+section을 보시면 1~5면 사이의 기사가 상위에 랭크돼 있어 비교적 중요한 기사들이 뽑혔다는 사실 또한 알 수 있다.
+
+img 1e015cad-4190-45ac-9da8-227aa1e47130
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/1e015cad-4190-45ac-9da8-227aa1e47130.png.html"><xmp>
+
+위 그림은 같은 날짜 스코어 하위 기사들입니다. 보통 중요하지 않은 기사들이 대부분이다.
+빨간색으로 표시한 기사가 눈에 띈다. 스코어는 낮은데 1면에 보도된 기사이다.
+이건 다른 언론사 기사와 제목이 다른 ‘차별성 있는 기사’인 것 같다.
+result 스코어를 section 정보와 동시에 고려한다면,
+중요도 지표가 낮은(제목이 특이한) 기사 가운데 앞쪽면 기사는,
+해당 언론사의 특종이나 단독기획 기사일 가능성이 높다고 해석해도 나쁘지 않을 것 같다는 생각이 든다.
+
+중심성 지표 기준 상위 3%를 중요기사라고 분류했다.
+분석 대상 전체 기사 20만7729건 가운데 해당 면이 차지하는 비중과 비교한 그림은 다음과 같다.
+지금까지 설명한 방법론이 앞쪽 면(비교적 중요) 기사를 걸러내는 데 효과적임을 알 수 있다.
+
+img e2016df3-7938-4c60-8970-0909e259efd3
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/e2016df3-7938-4c60-8970-0909e259efd3.png.html"><xmp>
+
+이제 ‘삼성’을 알아보자.
+중요도 상위 3%에 뽑힌 기사들 가운데 ‘삼성’이라는 키워드가 들어간 기사의 제목을 쭉 나열해봤다.
+삼성은 대한민국 대표기업인 만큼 회사 측 공식발표도 많고 매일 기사가 쏟아지는데도,
+중요한 이슈(지배구조 변화, 분기별 실적 등)가 비교적 잘 걸러짐을 확인할 수 있다.
+
+img b55fc007-bdc7-417d-88ef-93cd4bd61607
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/b55fc007-bdc7-417d-88ef-93cd4bd61607.png.html"><xmp>
+
+img a69d7006-2a53-4ecd-a585-fd31992579b0
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/a69d7006-2a53-4ecd-a585-fd31992579b0.png.html"><xmp>
+
+@
+마치며
+Graph-based News representation 이 스트럭처 저널리즘의 완벽한 구현이자 종착역은 아니다.
+다만 단순 팩트나 기존 기사들을 재조합하여,
+새로운 가치, 맥락을 만든다는 이상에 다가가기 위한 첫 단추로 역할을 할 수 있다면 좋을 것 같다.
+이외에도 옛날 기사를 어떻게든 되살려보려는 여러 가지 방법론들을 고민하고 있다,
+
+</xmp>
+   </BODY>
+</HTML>

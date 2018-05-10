@@ -1,0 +1,629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 23px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 80px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+    
+    background-color: black;
+    color:#ABBAB7;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+Sequence-to-Sequence 모델로 뉴스 제목 추출하기_180415_14_48.html
+<xmp>
+Sequence-to-Sequence 모델로 ‘뉴스 제목 추출하기’를 해보려고 한다다.
+결론부터 말하자면 완벽한 실험 결과가 나온 것은 아니다.
+시행착오를 중심으로 S2S 모델의 특징과 한계 등에 대해 이야기해볼것이다.
+
+@
+s2s model 은 rnn 의 가장 발전된 형태의 아키텍처이다.
+LSTM, GRU 등 rnn cell 을 길고 깊게 쌓아서 복잡하고 방대한 시퀀스 데이터를 처리하는 데 특화된 모델이다.
+실제로 S2S는 영어-한국어, 한국어-일본어 등 기계번역에 쓰이고 있다고 한다.
+이 모델은 2014년 이 논문에서 처음 소개가 됐다.
+https://arxiv.org/abs/1406.1078
+
+구글 텐서플로우에서도 이를 구현한 코드를 공개했다.
+이번 포스팅은 기본적으로 텐서플로우 예제들을 커스터마이징해서 만들었다.
+
+img 94d486f1-cf86-4dd8-824a-0f554dfb3f4b
+</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/94d486f1-cf86-4dd8-824a-0f554dfb3f4b.png.html"><xmp>
+
+S2S는 크게 encoder 와 decoder 두 파트로 나뉜다.
+영어를 한국어로 변환하는 기계번역을 예로 들어보겠다.
+인코더는 source language 인 영어 텍스트를 처리한다.
+디코더는 target language 인 한국어 텍스트를 처리한다.
+디코더의 입력은 정답에 해당하는 한국어 텍스트이다.
+예측값인 출력 또한 한국어 텍스트이다.
+<go>와 <eos>는 각각 정답 텍스트의 시작과 끝을 알리는 기호이다.
+인코더와 디코더의 입출력과 관련해 한번 예를 들어보겠다.
+
+input data to encoder : Good morning!
+
+input data to decoder : <go> 좋은 아침입니다!
+
+output data from decoder : 좋은 아침입니다! <eos>
+
+인코더는 소스랭귀지 정보(영어문장)을 압축한다.
+디코더는 인코더가 압축해 보내준 정보(영어문장)을 받아서 타겟랭귀지로 변환해 출력한다.
+다만 학습과정과 예측(테스트)과정이 조금 다르다.
+
+학습과정에서 디코더는 인코더가 보내온 정보(영어문장)과,
+실제 정답문장(‘<go>좋은 아침입니다!’)를 입력으로 받는다.
+그리고 예측문장인 ‘좋은 아침입니다<eos>’를 출력한다.
+
+예측 과정은 다음과 같다.
+먼저 디코더는 인코더가 보내온 정보(영어문장)와 ‘<go>’만 입력으로 받는다.
+그리고 결과물(예측값)을 차례대로 출력한다.
+띄어쓰기를 기준으로 input data(영어문장)을 만든다면,
+예측 과정에서의 디코더가 내놓는 첫 결과물은 ‘좋은’이 될것이다.
+예측 과정에서의 디코더는 직전에 예측한 ‘좋은’ 이라는 결과를,
+다시 자신의 다음 단계 입력으로 넣어 ‘아침입니다’를 출력한다.
+
+디코더가 예측 과정에서 자신의 직전 출력(단어 "좋은")을 다음 입력으로 다시 넣는 이유는,
+예측 단계에선 학습 때와는 달리 정답이 없기 때문이다.
+그래야 정답이 주어지지 않은 상태,
+(예컨대 구글 번역기에 우리가 번역하고 싶은 문장을 입력할 때),
+에서도 예측이 가능해 집니다.
+
+@
+우리가 수행할 문제를 정의해보자.
+img 6216f29b-ea91-401f-a9c3-e2f8a8f935c3
+</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/6216f29b-ea91-401f-a9c3-e2f8a8f935c3.png.html"><xmp>
+
+그럼 ‘뉴스 제목 생성’을 위 아키텍처에 적용해 보자.
+위 그림처럼 인코더에 뉴스 본문을 넣는다.
+디코더에는 뉴스의 제목을 넣는다.
+왜 공들여 이런 일을 하냐고요? 제 포부는 원대했습니다.
+정답이 있는 데이터만 S2S 학습이 가능하다.
+하지만 자연언어처리 분야에서 정답이 있는 데이터를 얻기는 어렵다.
+그런데 뉴스 기사는 다르다. 뉴스는 다른 분야 말뭉치 대비 양질이면서도 하루에도 수백 수천건씩 쏟아진다.
+조간신문이나 방송에 보도된 뉴스는 제목을 다는 데도 수많은 전문인력이 투입된다.
+수월하게 구할 수 있는 한국어 말뭉치 중에는 이만한 컨텐츠가 없다고 생각했다.
+
+게다가 뉴스 제목은 대체로 본문 내용을 전반적으로 포괄하는 경향이 있다.
+뉴스 본문이라는 문서를 요약하는 학습모델을 만들 때 제목을 정답으로 놓고 모델링을 하면 좋겠다는 생각을 했다.
+S2S는 시퀀스 형태의 인풋을 받아 또 다시 시퀀스 형태의 아웃풋을 내놓는다.
+따라서, 요약 결과가 완결된 문장 형태를 지닐 수 있지 않을까 하는 기대를 하기도 했다.
+뒤에 설명하겠지만 시작은 아주 창대했다.
+
+@
+데이터 전처리
+웹에서 2016년 1월초 사흘치 기사 1000건을 모았다
+
+뉴스제목: 경기도 준예산 사태…‘보육대란’ 이미 시작됐다
+
+[한겨레] 해법 안보이는 ‘누리예산’
+
+경기도의회 연말 여야 몸싸움
+남경필 지사·강득구 도의회 의장
+준예산 사태 논의에도 접점 못찾아
+당장 이달부터 누리과정 지원중단
+교육부는 계속 교육청만 압박
+
+지난 12월31일 경기도의회에서 여야 의원들의 몸싸움이라는 최악의 사태까지 연출한 누리과정(만 3~5살 무상보육) 사태가 새해에도 해법을 찾지 못한 채 정부와 교육청, 시·도의회, 여야 간 타협 없는 대치 국면으로 이어질 전망이다. (하략)
+
+우선 위 기사를 제목과 본문으로 나눴다.
+본문에는 중간제목으로 보이는 내용들(이탤릭체)도 일부 보이지만,
+일일이 손으로 거르기보다는 이대로 넣어도 학습이 가능할 것이라는 희망으로 모두 본문에 포함했다.
+
+다음은 토크나이징, 노말라이즈 등 전처리를 할 차례이다.
+KoNLPy 같은 오픈소스 형태소 분석기를 사용하려고 했다.
+그러나 형태소 분석 과정에서 잘못된 태깅으로 말뭉치 정보가 왜곡되거나 손실될 염려를 배제하기 위해,
+다른 방법을 쓰기로 했다.
+단어를 띄어쓰기 기준으로 나누고 3글자까지만 잘라서 노말라이즈를 했다.
+이렇게 하면 아래 예시의 토큰들을 한 단어로 취급할수 있다.
+
+감정가
+감정가의
+감정가격에
+감정가격은
+감정가격이
+
+텍스트 노말라이즈를 하는 근본 이유는 단어수를 줄여 분석의 효율성을 높이기 위함이다.
+위 다섯개 단어를 각각 다른 단어로 보고 분석하면 분석 정확성은 높아지겠지만 계산복잡성 또한 증가한다.
+어느 순간엔 정확성 상승 대비 분석 비용이 지나치게 높아지게 된다.
+실제로 단어 단위 S2S 모델은 "학습 말뭉치의 단어 수" 가 "분류해야할 클래스의 개수" 가 되기 때문에,
+단어수가 지나치게 크면 학습의 질은 물론 속도도 급격하게 감소하는 문제가 있다.
+이 때문에 단어 수를 적절하게 줄일 필요가 있다.
+위와 같은 방법으로 노말라이즈를 했음에도 불구하고 단어 개수가 무려 6만5016개나 됐다.
+
+@
+사흘치 기사에서 "영어", "숫자", "문장부호", "줄바꿈문자" 등을 제거한 기사는 아래와 같은 형태가 된다.
+title, contents는 변수명이므로 무시하고 보면된다.
+
+title: 경기도 준예산 사태 보육대란 이미 시작됐다
+
+contents: 해법 안보이 누리예산 경기도의회 연말 여야 몸싸움 남경필 지사 강득구 도의회 의장준예산 사태 논의에도 접점 못찾아 당장 이달부터 누리과정 지원중단 교육부는 계속 교육청만 압박 지난 월 일 경기도의회에서 여야 의원들의 몸싸움이라는 최악의 사태까지 연출한 누리과정 만 살 무상보육 사태가 새해에도 해법을 찾지 못한 채 정부와 교육청 시 도의회 여야 간 타협 없는 대치 국면으로 이어질 전망이다 (하략)
+
+@
+이제 S2S에 넣은 인풋을 만들어볼것이다.
+S2S엔 아래와 같이 텍스트를 숫자로 바꾸어 넣어야 한다.
+‘경기도’를 0, ‘준예산’을 1, ‘사태’를 2, 등.
+이렇게 단어를 숫자로 바꾸기 위해서는 단어와 숫자가 매칭된 dictionary 가 있어야 한다.
+학습 말뭉치인 사흘치 기사에 한번이라도 나온 모든 단어들을 세어서 이를 숫자로 매핑하는 것이다.
+예측 과정에서는 숫자를 단어로 바꿔야 하기 때문에 숫자와 단어가 매핑된 사전도 별도로 만들었다.
+
+word_to_ix
+{‘학생비자를’: 60946, ‘답답함이’: 13623, (중략) ‘감정가’: 979, ‘감정가의’: 979, ‘감정가격에’: 979, (하략) }
+
+ix_to_word
+{0: ‘가’, 1: ‘가가갤’, 2: ‘가감’, 3: ‘가거나’, (중략) 979: ‘감정가’ (하략) }
+
+눈썰미가 있는 분들은 이미 눈치채셨겠지만,
+저같은 경우엔 학습 말뭉치를 바로 3글자로 줄인게 아니라 단어를 숫자로 바꿔주는 사전인 word_to_ix에 모든 단어를 넣되,
+앞에서부터 3글자가 겹치는 단어들은 같은 인덱스를 주어서 단어가 숫자로 변환될 때 자연스럽게 3글자로 노말라이즈될 수 있도록 했다.
+이렇게 하면 원래 데이터가 어떻게 생겼는지 확인하기 쉬워서 이렇게 한건데 그냥 바로 3글자로 줄여도 된다.
+어쨌든 ‘감정가’, ‘감정가의’, ‘감정가격에’라는 단어는 모두 979라는 숫자로 바뀌게 된다.
+나중에 숫자를 단어로 바꾸고 싶을 땐 979가 ‘감정가’로 변환되게 된다.
+위 기사 본문의 경우 아래처럼 변환된다.
+
+[15087, 42582, 3168, 1162, 3168, 10661, 44455, 47701, (하략) ]
+
+위 데이터를 모델에 넣기 전에 고려해야할 것이 있다.
+데이터 차원수이다.
+RNN의 경우 시퀀스 길이에 유연한 네트워크 구조이긴 하다.
+하지만, S2S처럼 복잡하고 방대한 네트워크인 경우에는 시퀀스 길이를 어느 정도 맞춰주는 게 좋은 것 같다.
+그래서 나는 디코더에 넣을 시퀀스 길이(뉴스 제목 문장의 길이)를 뉴스 제목 최대 길이(18개 단어)로 맞췄다.
+인코더에 넣을 시퀀스 길이(뉴스 본문 문장 길이)를 기사 앞부분 100개씩으로 맞췄다.
+만약 이들 길이보다 데이터 시퀀스 길이가 짧다면 <PAD>를 넣어 길이를 맞춰줬다.
+<PAD> 넣는 법은 쉽다.
+word_to_ix와 ix_to_word에 각각 <PAD>라는 요소를 추가해주고 길이가 부족한 데이터에 끼워 넣었다.
+
+@
+모델 구현
+img 626db30b-7f66-4a2d-8a55-496f80d16e66
+</xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/626db30b-7f66-4a2d-8a55-496f80d16e66.png.html"><xmp>
+
+내가 사용한 S2S의 디테일한 설정들은 위 그림에 요약돼 있다.
+녹색으로 표시된 은닉층에서는 어떤 cell을 쓸지 선택할 수 있다.
+나의 경우 cell은 LSTM/GRU 두 가지를 실험했다.
+은닉층을 여러 개 쌓을 수도 있다.
+나는 1개(single) 혹은 3개(multi)를 실험했다.
+중요한 부분을 중점적으로 검토하게 해 분석의 정확도를 높이는 attention 기법을 적용/미적용한 것의 차이도 실험했다.
+https://arxiv.org/abs/1409.0473
+데이터 시퀀스의 순방향과 역방향 정보를 모두 고려하는 bidirectional 방법론 가운데,
+이번 실험에서는 메모리 문제로 후자만 차용을 했다.
+다시 말해 모델의 인코더에 입력 시퀀스(뉴스의 본문 문장)를 넣을 때 뉴스의 본문 문장을 뒤집어서 넣었다는 이야기이다.
+즉, 뉴스 본문 문장의 첫 단어가 인코더로 들어갈때 맨 마지막에 입력이 된다.
+아래는 텐서플로우 예제에서 커스터마이징한 코드이다.
+
+import tensorflow as tf
+import numpy as np
+import tool as tool
+import time
+
+# data loading
+data_path = 'C:/newscorpus.csv'
+# tool.loading_data() 함수는 아래와 같은 형식의 CSV(utf-8)를 읽어들여 title과 contents로 나누어 준다
+title, contents = tool.loading_data(data_path, eng=False, num=False, punc=False)
+# tool.make_dict_all_cut() 은 학습 말뭉치를 읽어들여 위 예시처럼 word_to_ix와 ix_to_word를 생성해준다
+word_to_ix, ix_to_word = tool.make_dict_all_cut(title+contents, minlength=0, maxlength=3, jamo_delete=True)
+
+# parameters
+# multi라는 parameter는 hidden layer 를 1개만 쌓을건지 여러개 쌓을건지 지정하는 변수이다
+multi = True
+# forward_only라는 변수는 학습 때는 false, 추론(테스트) 때는 true로 지정한다
+forward_only = False
+hidden_size = 300
+# vocab_size는 말뭉치 사전에서 단어의 총 갯수이다
+vocab_size = len(ix_to_word)
+# num_layers 는 은닉층의 갯수이다
+num_layers = 3
+learning_rate = 0.001
+# batch_size는 1회당 학습하는 데이터 수를 의미한다
+batch_size = 16
+
+# encoder_size는 인코더에 넣을 입력 시퀀스(뉴스본문 문장)의 최대 길이를 지정한다 
+encoder_size = 100
+# decoder_size는 디코더에 넣을 시퀀스(뉴스의 정답 제목 문장)의 최대 길이이다.
+# tool.check_doclength() 는 입력 컨텐츠(뉴스 본문 문장)의 최대 길이를 반환하는 유틸 함수이다
+# tool.make_inputs() 는 ‘데이터 전처리’에서 설명드렸듯 단어를 숫자로 바꾸는 과정을 한번에 해주는 함수이다
+decoder_size = tool.check_doclength(title,sep=True) # (Maximum) number of time steps in this batch
+steps_per_checkpoint = 10
+
+
+네트워크를 선언한 부분을 보겠습니다. cell은 ‘tf.nn.rnn_cell.GRUCell’이라고 선언했습니다. tf.nn.rnn_cell.LSTMCell’이라고 선언하면 GRU를 간단하게 LSTM cell로 변환 가능합니다. 층을 여러개 쌓고 싶으면 ‘tf.nn.rnn_cell.MultiRNNCell’이라는 함수를 쓰면 됩니다.
+
+
+# transform data
+encoderinputs, decoderinputs, targets_, targetweights = \
+    tool.make_inputs(contents, title, word_to_ix,
+                     encoder_size=encoder_size, decoder_size=decoder_size, shuffle=False)
+
+# 이제 클래스 ‘seq2seq’에 정의한 네트워크 구조를 살펴보겠습니다.
+class seq2seq(object):
+
+    def __init__(self, multi, hidden_size, num_layers, forward_only,
+                 learning_rate, batch_size,
+                 vocab_size, encoder_size, decoder_size):
+        # variables
+        self.source_vocab_size = vocab_size
+        self.target_vocab_size = vocab_size
+        self.batch_size = batch_size
+        self.encoder_size = encoder_size
+        self.decoder_size = decoder_size
+        self.learning_rate = tf.Variable(float(learning_rate), trainable=False)
+        self.global_step = tf.Variable(0, trainable=False)
+
+        # networks
+        W = tf.Variable(tf.random_normal([hidden_size, vocab_size]))
+        b = tf.Variable(tf.random_normal([vocab_size]))
+        output_projection = (W, b)
+        # encoder_size 만큼의 placeholder를 생성해 encoder_inputs를 만든다
+        # 인덱스만 있는 데이터는 원핫 인코딩을 시행하지 않는다
+        self.encoder_inputs = [tf.placeholder(tf.int32, [batch_size]) for _ in range(encoder_size)]  
+        # 마찬가지로 decoder_inputs, targets, target_weights 를 만든다
+        self.decoder_inputs = [tf.placeholder(tf.int32, [batch_size]) for _ in range(decoder_size)]
+        self.targets = [tf.placeholder(tf.int32, [batch_size]) for _ in range(decoder_size)]
+        # target_weights 는 target(제목)에 대응하는 요소가 <PAD>일 경우 0, <PAD>가 아닐 경우 1로 채워넣은 
+        리스트이다
+        # target_weights는 정답에 끼어있는 <PAD>가 학습에 반영되지 않도록 도와주는 값이라고 이해하면 될 것 같다.
+        self.target_weights = [tf.placeholder(tf.float32, [batch_size]) for _ in range(decoder_size)]
+
+
+        이제 학습과 예측 과정을 살펴보겠다. 아래는 이해를 돕기 위한 그림이다.
+        img 303573ba-c847-47d1-a62d-a2df949e32a5
+        </xmp><img src="/media/young/5e7be152-8ed5-483d-a8e8-b3fecfa221dc/text/mycodehtml/nlp/ratsgo/pic/303573ba-c847-47d1-a62d-a2df949e32a5.png.html"><xmp>
+
+        # models
+        if multi:
+            single_cell = tf.nn.rnn_cell.GRUCell(num_units=hidden_size)
+            cell = tf.nn.rnn_cell.MultiRNNCell([single_cell] * num_layers)
+        else:
+            cell = tf.nn.rnn_cell.GRUCell(num_units=hidden_size)
+            #cell = tf.nn.rnn_cell.LSTMCell(num_units=hidden_size)
+
+         
+
+        # 학습 과정을 살펴보겠다. if not forward_only 구문이 실행되는 부분이다
+        if not forward_only:
+            # tf.nn.seq2seq.embedding_attention_seq2seq() 는 outputs를 반환한다
+            # feed_previous 에 False를 씁니다
+            # attention을 쓰지 않으려면 tf.nn.seq2seq.embedding_seq2seq() 를 사용하면된다
+            self.outputs, self.states = tf.nn.seq2seq.embedding_attention_seq2seq(
+                self.encoder_inputs, self.decoder_inputs, cell,
+                num_encoder_symbols=vocab_size,
+                num_decoder_symbols=vocab_size,
+                embedding_size=hidden_size,
+                output_projection=output_projection,
+                feed_previous=False)
+
+            # 이 output에 W를 내적하고 b를 더해 logit을 만든다
+            # logit 을 바탕으로 cross-entropy loss를 구한다 
+            self.logits = [tf.matmul(output, output_projection[0]) + output_projection[1] for output in self.outputs]
+            self.loss = []
+            # 여기서 주목할 점은 cross-entropy loss에 target_weight를 곱해준다는 점이다
+            # target_weight 은 <PAD> 인 경우 0이기 때문에 <PAD> 에 해당하는 cross-entropy loss는 무시된다
+            for logit, target, target_weight in zip(self.logits, self.targets, self.target_weights):
+                crossentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logit, target)
+                self.loss.append(crossentropy * target_weight)
+            self.cost = tf.nn.math_ops.add_n(self.loss)
+            self.train_op = tf.train.AdamOptimizer(learning_rate).minimize(self.cost)
+
+ 
+        # 예측 과정을 살펴보자.
+        # else: 구문이 실행되는 부분이다.
+        else:
+            # tf.nn.seq2seq.embedding_attention_seq2seq() 의 feed_previos 에 True를 집어넣는다
+            # 디코더가 직전 과정에서 출력한 예측 결과를 다음 과정의 디코더의 인풋으로 받아들여 추론하라는 지시이다
+            # 나머지는 일반적인 딥러닝 네트워크 구조와 크게 다르지 않다
+            # 이 코드 아래에서 위 코드가 import해서 사용하는 tool.py 가 있다
+            # tool.py에 있는 모든 코드들은 제가 직접 만들었다
+            self.outputs, self.states = tf.nn.seq2seq.embedding_attention_seq2seq(
+                self.encoder_inputs, self.decoder_inputs, cell,
+                num_encoder_symbols=vocab_size,
+                num_decoder_symbols=vocab_size,
+                embedding_size=hidden_size,
+                output_projection=output_projection,
+                feed_previous=True)
+            self.logits = [tf.matmul(output, output_projection[0]) + output_projection[1] for output in self.outputs]
+
+    def step(self, session, encoderinputs, decoderinputs, targets, targetweights, forward_only):
+        input_feed = {}
+        for l in range(len(encoder_inputs)):
+            input_feed[self.encoder_inputs[l].name] = encoderinputs[l]
+        for l in range(len(decoder_inputs)):
+            input_feed[self.decoder_inputs[l].name] = decoderinputs[l]
+            input_feed[self.targets[l].name] = targets[l]
+            input_feed[self.target_weights[l].name] = targetweights[l]
+        if not forward_only:
+            output_feed = [self.train_op, self.cost]
+        else:
+            output_feed = []
+            for l in range(len(decoder_inputs)):
+                output_feed.append(self.logits[l])
+        output = session.run(output_feed, input_feed)
+        if not forward_only:
+            return output[1] # loss
+        else:
+            return output[0:] # outputs
+
+sess = tf.Session()
+model = seq2seq(multi=multi, hidden_size=hidden_size, num_layers=num_layers,
+                    learning_rate=learning_rate, batch_size=batch_size,
+                    vocab_size=vocab_size,
+                    encoder_size=encoder_size, decoder_size=decoder_size,
+                    forward_only=forward_only)
+sess.run(tf.global_variables_initializer())
+step_time, loss = 0.0, 0.0
+current_step = 0
+start = 0
+end = batch_size
+while current_step < 10000001:
+
+    if end > len(title):
+        start = 0
+        end = batch_size
+
+    # Get a batch and make a step
+    start_time = time.time()
+    encoder_inputs, decoder_inputs, targets, target_weights = tool.make_batch(encoderinputs[start:end],
+                                                                              decoderinputs[start:end],
+                                                                              targets_[start:end],
+                                                                              targetweights[start:end])
+
+    if current_step % steps_per_checkpoint == 0:
+        for i in range(decoder_size - 2):
+            decoder_inputs[i + 1] = np.array([word_to_ix['<PAD>']] * batch_size)
+        output_logits = model.step(sess, encoder_inputs, decoder_inputs, targets, target_weights, True)
+        predict = [np.argmax(logit, axis=1)[0] for logit in output_logits]
+        predict = ' '.join(ix_to_word[ix][0] for ix in predict)
+        real = [word[0] for word in targets]
+        real = ' '.join(ix_to_word[ix][0] for ix in real)
+        print('\n----\n step : %s \n time : %s \n LOSS : %s \n 예측 : %s \n 손질한 정답 : %s \n 정답 : %s \n----' %
+              (current_step, step_time, loss, predict, real, title[start]))
+        loss, step_time = 0.0, 0.0
+
+    step_loss = model.step(sess, encoder_inputs, decoder_inputs, targets, target_weights, False)
+    step_time += time.time() - start_time / steps_per_checkpoint
+    loss += np.mean(step_loss) / steps_per_checkpoint
+    current_step += 1
+    start += batch_size
+    end += batch_size
+view rawnews_seq2seq.py hosted with ❤ by GitHub
+https://gist.github.com/ratsgo/0f45e1500c395f7616787185db448015#file-news_seq2seq-py
+
+@
+위 코드가 import해서 사용하는 tool.py 파일이다
+
+import numpy as np
+import pandas as pd
+from collections import defaultdict
+
+####################################################
+# loading function                                 #
+####################################################
+
+def loading_data(data_path, eng=True, num=True, punc=False):
+    # data example : "title","content"
+    # data format : csv, utf-8
+    corpus = pd.read_table(data_path, sep=",", encoding="utf-8")
+    corpus = np.array(corpus)
+    title = []
+    contents = []
+    for doc in corpus:
+        if type(doc[0]) is not str or type(doc[1]) is not str:
+            continue
+        if len(doc[0]) > 0 and len(doc[1]) > 0:
+            tmptitle = normalize(doc[0], english=eng, number=num, punctuation=punc)
+            tmpcontents = normalize(doc[1], english=eng, number=num, punctuation=punc)
+            title.append(tmptitle)
+            contents.append(tmpcontents)
+    return title, contents
+
+def make_dict_all_cut(contents, minlength, maxlength, jamo_delete=False):
+    dict = defaultdict(lambda: [])
+    for doc in contents:
+        for idx, word in enumerate(doc.split()):
+            if len(word) > minlength:
+                normalizedword = word[:maxlength]
+                if jamo_delete:
+                    tmp = []
+                    for char in normalizedword:
+                        if ord(char) < 12593 or ord(char) > 12643:
+                            tmp.append(char)
+                    normalizedword = ''.join(char for char in tmp)
+                if word not in dict[normalizedword]:
+                    dict[normalizedword].append(word)
+    dict = sorted(dict.items(), key=operator.itemgetter(0))[1:]
+    words = []
+    for i in range(len(dict)):
+        word = []
+        word.append(dict[i][0])
+        for w in dict[i][1]:
+            if w not in word:
+                word.append(w)
+        words.append(word)
+
+    words.append(['<PAD>'])
+    words.append(['<S>'])
+    words.append(['<E>'])
+    words.append(['<UNK>'])
+    # word_to_ix, ix_to_word 생성
+    ix_to_word = {i: ch[0] for i, ch in enumerate(words)}
+    word_to_ix = {}
+    for idx, words in enumerate(words):
+        for word in words:
+            word_to_ix[word] = idx
+    print('컨텐츠 갯수 : %s, 단어 갯수 : %s'
+                  % (len(contents), len(ix_to_word)))
+    return word_to_ix, ix_to_word
+
+  
+####################################################
+# making input function                            #
+####################################################
+
+def make_inputs(rawinputs, rawtargets, word_to_ix, encoder_size, decoder_size, shuffle=True):
+    rawinputs = np.array(rawinputs)
+    rawtargets = np.array(rawtargets)
+    if shuffle:
+        shuffle_indices = np.random.permutation(np.arange(len(rawinputs)))
+        rawinputs = rawinputs[shuffle_indices]
+        rawtargets = rawtargets[shuffle_indices]
+    encoder_input = []
+    decoder_input = []
+    targets = []
+    target_weights = []
+    for rawinput, rawtarget in zip(rawinputs, rawtargets):
+        tmp_encoder_input = [word_to_ix[v] for idx, v in enumerate(rawinput.split()) if
+                             idx < encoder_size and v in word_to_ix]
+        encoder_padd_size = max(encoder_size - len(tmp_encoder_input), 0)
+        encoder_padd = [word_to_ix['<PAD>']] * encoder_padd_size
+        encoder_input.append(list(reversed(tmp_encoder_input + encoder_padd)))
+        tmp_decoder_input = [word_to_ix[v] for idx, v in enumerate(rawtarget.split()) if
+                             idx < decoder_size - 1 and v in word_to_ix]
+        decoder_padd_size = decoder_size - len(tmp_decoder_input) - 1
+        decoder_padd = [word_to_ix['<PAD>']] * decoder_padd_size
+        decoder_input.append([word_to_ix['<S>']] + tmp_decoder_input + decoder_padd)
+        targets.append(tmp_decoder_input + [word_to_ix['<E>']] + decoder_padd)
+        tmp_targets_weight = np.ones(decoder_size, dtype=np.float32)
+        tmp_targets_weight[-decoder_padd_size:] = 0
+        target_weights.append(list(tmp_targets_weight))
+    return encoder_input, decoder_input, targets, target_weights
+
+####################################################
+# doclength check function                         #
+####################################################
+def check_doclength(docs, sep=True):
+    max_document_length = 0
+    for doc in docs:
+        if sep:
+            words = doc.split()
+            document_length = len(words)
+        else:
+            document_length = len(doc)
+        if document_length > max_document_length:
+            max_document_length = document_length
+    return max_document_length
+
+  
+####################################################
+# making batch function                            #
+####################################################
+def make_batch(encoder_inputs, decoder_inputs, targets, target_weights):
+    encoder_size = len(encoder_inputs[0])
+    decoder_size = len(decoder_inputs[0])
+    encoder_inputs, decoder_inputs, targets, target_weights = \
+        np.array(encoder_inputs), np.array(decoder_inputs), np.array(targets), np.array(target_weights)
+    result_encoder_inputs = []
+    result_decoder_inputs = []
+    result_targets = []
+    result_target_weights = []
+    for i in range(encoder_size):
+        result_encoder_inputs.append(encoder_inputs[:, i])
+    for j in range(decoder_size):
+        result_decoder_inputs.append(decoder_inputs[:, j])
+        result_targets.append(targets[:, j])
+        result_target_weights.append(target_weights[:, j])
+    return result_encoder_inputs, result_decoder_inputs, result_targets, result_target_weights
+view rawtool.py hosted with ❤ by GitHub
+
+@
+실험 결과(괄호 안은 정답을 나타낸다)
+
+Options:
+3-layers, encoder_size(100), decoder_size(20), GRU(300차원), attention, batch_size=16
+
+§Iter 500 : 신당 신당 신당 신당 신당 <E><E> <E> <E> <E> <E> <E> <E> <E><E> <E> <E> <E> 
+(안철수 신당 호남 위 새누리당 수도권 영남 충청서선두)
+§Iter 1000 : 윤미옥 김윤정 김윤정 두 두 두 두 향토방 <E><E> <E> <E> <E> <E> <E> <E> <E><E> 
+(윤미옥 김윤정 예비역 소령 두 번째 군대 인생 향토방위 수준 높이겠다) 
+§Iter 1500 : 삼성베트남 베트남 휴대폰 휴대폰 부품 부품 <E><E> <E> <E> <E> <E> <E> <E> <E><E> <E> 
+(삼성 베트남 공장 덕분에 휴대폰 부품 수출 급증)
+§Iter 2000 : 롯데 지분지분 취득 <E><E> <E> <E> <E> <E> <E> <E> <E><E> <E> <E> <E> <E> 
+(롯데 롯데제과 지분 취득)
+§Iter 2500 : 윤병세 윤병세 국민적 국민적 저항자화자찬 자화자찬 자화자찬 삶 삶 삶 높은 높은 높은 질 없는전 전 
+(윤병세 장관은 국민적 저항 외면 자화자찬)
+
+예측
+1-layer           3-layers       3-layer + attention      정답
+대북 도발 김정은   확성기 높이다   대북 방송                 국민 단단한 안보 의식이 추가 도발 막는다
+최경환 누리        누리 예산      누리 예산                 누리과정 예산 일단 늘어나 교부금 활용하라
+삼성              삼성 가전      너마저 실적 반도체 불투명   반도체 주춤 삼성전자 영업이익 감소
+
+
+위 결과 표를 보면 알겠지만 학습은 비교적 잘 되는 것처럼 보인다.
+iter 1000번=1epoch(배치를 1000번 넣었다는 뜻,
+1000개 기사를 학습데이터로 넣었으므로 전체 데이터 기준으로는 16번 학습)
+만에 어느 정도 제목 윤곽이 나오는 것을 볼 수 있다.
+학습시 디코더 입력에 실제 정답을 넣어서 이렇게 잘 되는 것 같기도 하다.
+
+하지만 학습에 쓰이지 않은 데이터를 넣어 예측한 결과를 보면 조금 아쉽다.
+일단 학습 과정보다는 그 품질이 확실히 떨어진다.
+그 원인은 다양하겠지만 뉴스 본문 내용과 뉴스 제목이 가지는 특성 때문이 아닐까 생각한다.
+같은 사건을 보도하더라도 완전히 같은 내용의 기사는 없다
+그 본문이 거의 비슷하더라도 언론사마다 제목은 크게 다른 경우가 많다.
+다시 말해 ‘Good morning!’ 의 한국어 표현은 ‘좋은 아침입니다!’, ‘안녕하세요’ 등 몇 가지 안되는 ‘닫힌 정답’이다.
+뉴스 제목은 언론사마다 천차만별인 ‘열린 정답’ 이다.
+학습데이터 양이 작아서인지 3개층, attention 모델 등 복잡한 네트워크가,
+1-layer와 비슷한 성능을 내는 점 또한 확인할 수 있다.
+
+@
+아울러 이번에 실험하면서 S2S에 대해 가장 크게 느낀 점은,
+S2S는 예측시 비교적 일반적인 단어를 출력하는 경우가 많다는 점이다. 
+위 결과에도 알 수 있듯 경제 기사엔 ‘삼성’, 안보 기사엔 ‘대북’, 경제정책 기사엔 ‘예산’ 같은,
+일반적인 단어를 예측하고 있다.
+
+이는 고차원의 입력데이터를 추상화하여 표현하는 S2S만의 특징이 아닌가 생각이 든다.
+
+내가 듣기로 chatbot 구현을 위해 대화 데이터를 S2S 입력으로 줄 경우,
+‘아…’, ‘네…’, ‘그럼요’ 정도의 답을 내놓게 된다고 한다.
+
+‘아…’, ‘네…’, ‘그럼요’ 같은 단어들은 어떤 대화에서도 성립되는,
+오답이 아닌 답변이라서 그런 것 같다.
+앞으로 연구해볼 만한 주제라는 생각이 든다.
+
+@
+향후 계획
+이 작업을 수행한 컴퓨터(i5-3690, 32GB RAM, GTX 970) 기준으로 예측해야할 단어수가 6만개가 넘어가면,
+메모리 부족으로 학습 자체가 불가능했다.
+단어수를 효과적으로 줄이거나 하드웨어 업그레이드 등을 통해 추가로 실험할 계획이다.
+정치, 경제, 사회 등 도메인별로 학습해 볼 생각도 있다.
+
+</xmp>
+   </BODY>
+</HTML>

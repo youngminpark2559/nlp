@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 23px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 80px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+    
+    background-color: black;
+    color:#ABBAB7;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+</HEAD>
+<BODY>
+빈도수 세기의 놀라운 마법 Word2Vec, Glove, Fasttext_180416_07_36.html
+
+<xmp>
+단어를 벡터화하는 임베딩(embedding) 방법론인 Word2Vec, Glove, Fasttext에 대해 알아보자.
+세 방법론은 어떤 정보를 보존하면서 단어벡터를 만들기에 뛰어난 성능보여줄수 있는 것 일까?
+세 방법론이 크고 작은 차이점을 갖고 있긴하지만,
+단어 동시 등장 정보 (word’s of co-occurrence) 를 보존한다는 점에서,
+빈도수 기반의 기존 방법론들과 본질적으로 다르지 않다는 점을 이야기해보려고 한다.
+
+@
+Word2Vec 은 단어를 벡터로 바꾸는 방법론이다.
+Word2Vec 에는 크게 CBOW 와 Skip-Gram 두 가지 방식이 있다.
+CBOW 는 주변에 있는 단어들을 가지고 중심에 있는 단어를 맞추는 방식이다.
+Skip-Gram 은 중심에 있는 단어로 주변 단어를 예측하는 방법이다.
+
+나는 ____에 간다.
+
+위 문장에 들어갈 수 있는 단어는 다양하다.
+‘학교’ 일 수도, ‘집’ 일 수도, ‘회사’ 일 수도 있다.
+이렇듯 주변 단어를 가지고 중심에 있는 단어를 맞춤으로써 단어 벡터들을 만들어 내는 방법이 CBOW 이다.
+
+반대로 아래처럼 ‘외나무다리’ 앞뒤로 어떤 단어가 올지 예측하면서 단어 벡터들을 만드는 방법이 Skip-Gram 이다.
+
+__ 외나무다리 __
+
+‘외나무다리’ 앞에는 어떤 단어가 올까?
+아마도 ‘-는’ 일 것이다.
+그 앞에는 ‘원수’ 가 올 것이다.
+‘외나무다리’ 뒤에는 어떤 단어가 등장할까?
+‘-에서’ 와 ‘만난다’ 일 가능성이 높을 것이다.
+우리가 학습시킬 말뭉치에서도 ‘외나무다리’ 라는 단어 뒤에 ‘-에서’, ‘만난다’ 는 단어가 나왔다고 가정하자.
+그러면 Word2Vec 은 ‘외나무다리’ 단어가 ‘-에서’, ‘만난다’ 단어들과,
+어떤 연관이 있다고 보고 이를 감안해서 단어를 벡터로 만들게 된다.
+
+여기서 고민해볼 문제가 하나 있다.
+과연 ‘외나무다리’ 단어는 ‘원수’ 단어와 비슷한 단어라고 볼 수 있을까?
+정답이 없는 문제이다.
+관련이 없다고도, 관련이 있다고도 볼 수 있다.
+‘외나무다리’ 단어는 ‘원수’ 단어와는 그 의미가 정확히 같지는 않다.
+그러나 자주 같이 쓰이는 연어 (collocation) 이다.
+
+@
+Word2Vec 의 목적함수와 코사인 유사도
+Word2Vec 은 Distributional Hypothesis 에 근거한 방법론이다.
+https://ratsgo.github.io/from%20frequency%20to%20semantics/2017/03/10/frequency/
+Distributional Hypothesis 에 근거한 방법론은,
+비슷한 위치에 등장하는 단어들은 그 의미도 서로 유사할 것이라는 전제를 사용한다.
+
+어쨌든 Word2Vec (Skip-Gram) 은 아래 식을 최대화하는 걸 목표로 한다.
+$$$p(o|c)=\frac{e^{(u^{T}_{o}v_{c})}}{\sum\limits_{w=1}^{W}e^{u^{T}_{w}v_{c}}}$$$
+식 좌변의 의미를 알아보자.
+o는 주변단어 (surrounding word), c는 중심단어 (context word) 이다.
+다시 말해, p(o|c) 는 중심단어 (c) 가 주어졌을 때 주변단어 (o) 가 등장할 조건부확률을 뜻한다.
+이 식을 최대화하는 것은 중심단어로 주변단어를 잘 맞춘다는 의미이다.
+즉, ‘외나무다리’ 가 등장했을 때 ‘원수’ 라는 표현이 나올 것이라는 사실을 예측하는 것이다.
+
+Word2Vec 연구진은 p(o|c) 을 위 식의 우변과 같이 정의했다.
+u와 v는 단어벡터들이다.
+예컨대 ‘외나무다리’ 라는 중심단어 벡터가 $$$v_{c}$$$, ‘원수’ 라는 주변단어 벡터가 $$$u_{o}$$$ 이다.
+사실 엄밀히 얘기하면 u와 v는 다른 벡터들이다.
+
+하지만 임베딩이 잘 되어 있다면 학습 결과로 도출된,
+u (원수 단어 벡터), v (외나무다리 단어 벡터) 가운데 어떤 걸 써도 상관없다고 한다.
+이 때문에 이후 설명에서 큰 차이를 두지 않았다.
+Word2Vec의 학습 과정에 대해 좀 더 알고 싶은 분은 이곳을 참고하면된다.
+https://ratsgo.github.io/from%20frequency%20to%20semantics/2017/03/30/word2vec/
+
+식 우변의 분모와 분자를 설명하기 전에 코사인 유사도를 설명하는 것이 좋겠다.
+2차원 평면 위에 반지름이 1인 단위원이 있다고 가정한다.
+코사인(cosine)의 정의에 의해 \cos(\theta)는 아래 그림의 녹색 선의 길이와 같다.
+
+img cea75edd-b6c6-442b-b9fa-7848d692285d.png
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/cea75edd-b6c6-442b-b9fa-7848d692285d.png.html"><xmp>
+
+
+예컨대 A가 B에 정확히 포개어져 있을 때 (\theta=0) \cos(\theta)는 1 이다.
+B는 고정한 채 A가 y축 상단으로 이동한다고 가정한다. (\theta가 0도에서 90도로 증가)
+이때 \cos(\theta) 는 점점 감소하여 0이 되게 된다.
+아래 그림의 경우 빨간색 수직선이 x축과 만나는 점이 바로 \cos(\theta) 가 된다.
+
+img 75883501-d9ea-4c54-910b-911e499ec060.gif
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/75883501-d9ea-4c54-910b-911e499ec060.gif.html"><xmp>
+
+\cos(\theta) 는 단위원 내 벡터들끼리의 내적 (inner product) 과 같다.
+내적값이 커진다는 것은 두 벡터가 이루는 \theta 가 작아진다(유사도가 높아진다)는 의미로 받아들일 수 있다.
+이는 고차원 벡터공간으로도 확대할 수 있다.
+Word2Vec 연구진은 이러한 코사인과 내적의 성질을 목적함수 구축에 적극 활용한 것 같다.
+
+@
+그렇다면 위 식의 우변을 최대화한다는 말은 어떤 의미를 지니는 걸까?
+분자를 키우고, 분모를 줄이면 최대화 목표를 달성할 수 있다.
+
+@
+우선 분자 부분을 본다.
+$$$e^{(u^{T}_{o}v_{c})}$$$
+
+분자를 증가시킨다는 건 exp 의 지수를 크게 한다는 걸 뜻한다.
+exp의 지수는 두 벡터의 내적값이다.
+두 벡터의 내적값이 커진다는 건 앞서 언급했던 것처럼,
+벡터들 사이의 \theta 를 줄인다 (즉 유사도를 높인다) 는 말이 될 것 이다.
+다시 말해 중심단어 (c) 와 주변단어 (o) 를 벡터공간에 뿌릴 때,
+두 단어벡터를 인근에 위치시킨다 (\theta를 줄인다=유사도를 높인다) 는 의미로 해석할 수 있다는 얘기이다.
+
+@
+분모를 줄이는것은 어떻게 받아들여야 할까? 분모는 아래와 같다.
+$$$\sum\limits_{w=1}^{W}e^{(u^{T}_{w}v_{c})}$$$
+따라서 분모는 중심단어의 벡터 $$$v_{c}$$$ 와 학습 말뭉치 내 모든 단어들의 벡터 $$$u_{w}$$$ 를 각각 내적한 것의 총합이다.
+분모를 줄이려면 주변에 등장하지 않은 단어들의 벡터 $$$u_{w}$$$ 와 중심단어의 벡터 $$$v_{c}$$$ 와의 내적값은 작아져야 한다.
+즉, 중심단어 주변에 등장하지 않은 단어들의 벡터 $$$u_{w}$$$ 와 중심단어 벡터 사이 $$$v_{c}$$$ 의 \theta 를 키운다(코사인 유사도를 줄인다)는 의미가 된다.
+
+@
+Word2Vec과 단어의 ‘동시 등장 정보’
+여기까지 보면 Word2Vec 은 빈도수 기반 방법론들과 별 관련이 없는 것도 같다.
+그러면 Word2Vec이 어떻게 빈도수 기반 방법론과 관계를 지니게 되는 것일까?
+그 비밀은 학습 과정에 숨겨져 있다.
+
+사용자가 주변단어 몇 개를 볼 지 (window) 를 정해주면,
+Word2Vec 은 말뭉치를 window 크기로 슬라이딩하면서 스크린한다.
+그리고 window 는 중심단어별로 주변단어들을 보고,
+각 단어에 해당하는 벡터들의 요소값들을 조금씩 업데이트함으로써 단어를 벡터로 임베딩한다.
+
+다시 말해 Word2Vec 은 window 내에 등장하지 않는 단어에 해당하는 벡터는,
+중심단어 벡터와 벡터공간상에서 멀어지게끔 (내적값 줄이기) 만든다.
+window 내에 등장하는 주변 단어에 해당하는 벡터는,
+중심단어 벡터와 가까워지게끔 (내적값 키우기) 만든다.
+
+그럼 이렇게 생각해보는건 어떨까?
+window 내에 등장하지 않으면 결과값을 줄이고,
+등장할 경우 결과값을 키우는 건?
+정확히 이 방식으로 작동하는 알고리즘이 오래 전부터 제안돼 왔다.
+예컨대 주변 단어를 몇 개 볼지를 정하고,
+동시에 등장하는 단어의 빈도수를 세어서 행렬로 변환한 ‘단어-문맥행렬‘ 이 대표적 사례이다.
+
+바꿔 말하면 Word2Vec 은 기존 count 기반 방법론처럼,
+자주 같이 등장하는 단어들의 정보(Co-occurrence)를 보존한다는 얘기이다.
+Omer and Yoav(2014)도 Word2Vec 은,
+본질적으로 기존 count 기반의 방법론과 다르지 않다는 점을 논증해 눈길을 끈다.
+https://papers.nips.cc/paper/5477-neural-word-embedding-as-implicit-matrix-factorization.pdf
+
+@
+GloVe, Fasttext는?
+GloVe는 2014년 미국 스탠포드대학 연구팀에서 개발한 단어 임베딩 방법론이다.
+GloVe 연구진이 명시적으로 밝혔듯 GloVe가 보존하려는 정보는 단어 동시 등장 여부이다.
+GloVe로 임베딩된 단어 벡터끼리의 내적은 그 단어들이 동시에 등장할 확률에 로그를 취해준 값과 같다.
+(their dot product equals the logarithm of the words’ probability of co-occurrence)
+Word2Vec이 임베딩된 두 단어벡터의 내적이 두 단어에 대한 코사인 유사도라면,
+GloVe는 동시 등장 확률인 셈이다.
+그럼 GloVe 연구팀이 직접 든 예시를 볼까?
+
+img e007f6e2-f906-4f15-944b-2140d7282aae.png
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/e007f6e2-f906-4f15-944b-2140d7282aae.png.html"><xmp>
+
+위 표를 기준으로 할 때 , GloVe는 $$$\frac{P(k|ice)}{P(k|steam)}$$$ 로 표현되는 동시 등장 정보 간 비율을 보존하면서 단어를 벡터로 바꾸고자 한다.
+예컨대 ‘solid’ 라는 단어를 벡터공간에 임베딩할 때,
+‘ice’, ‘steam’ 중 ‘ice’ 쪽에 가깝게 임베딩한다는 이야기이다.
+GloVe의 학습 방식을 자세히 살펴보고 싶으신 분은 이곳을 참고한다.
+https://ratsgo.github.io/from%20frequency%20to%20semantics/2017/04/09/glove/
+한편 페이스북이 2016년 발표한 Fasttext는,
+원래 단어를 부분단어(subword)의 벡터들로 표현한다는 점을 제외하고는 Word2Vec과 거의 유사하다.
+https://research.fb.com/fasttext/
+노이즈가 많은 말뭉치에 강점을 지닌 것으로 알려져 있다.
+
+@
+세 방법론의 한계
+세 방법론이 ‘단어 동시 등장 정보’ 를 보존한다는 점을 논의했다.
+그렇다면 이들 방법론에 한계점은 없는걸까? 처음에 든 예시를 다시 들어보겠다.
+
+나는 ___에 간다
+
+위 예시에서 빈칸에는 ‘학교’, ‘집’, ‘회사’ 따위가 모두 들어갈 수 있다.
+‘학교’, ‘집’, ‘회사’ 라는 단어가 위 예시 문장과 같은 경우에서만 쓰였다면,
+‘학교’, ‘집’, ‘회사’ 는 서로 명백히 다른 단어임에도 불구하고,
+임베딩 벡터 공간에서 세 단어들의 벡터의 유사도가 매우 높게 나타나게 된다.
+
+물론 학습 말뭉치가 충분히 크다면 세 단어가 사용된 사례(문장)가 다양할 것이기 때문에,
+‘학교’, ‘집’, ‘회사’ 단어들의 벡터 간 거리가 충분히 멀게 (코사인 유사도가 작게) 임베딩이 될 것이다.
+
+하지만 의미상 아무런 관련이 없어 보이는 단어임에도,
+벡터공간에 매우 가깝게 임베딩되는 사례가 자주 발생하는 것 같다.
+
+아래는 6개 사이트에서 스크랩핑한 휴대폰 리뷰 29만7906개로 구성된 말뭉치를 Word2Vec으로 임베딩한 결과이다.
+이후 ‘소프트웨어’라는 단어와 코사인 유사도가 가장 높은 단어 5개를 뽑아봤다.
+
+하드웨어, 0.75
+OS, 0.68
+os, 0.63
+운영체제, 0.63
+발적화, 0.62
+
+‘OS’, ‘운영체제’, ‘발적화’ 같은 단어가 소프트웨어와 유사하다는 결과는 직관적으로 납득할 만하다고 생각한다.
+하지만 ‘하드웨어’가 ‘소프트웨어’랑 가장 비슷하다는 결과는 받아들이기 힘들다.
+Word2Vec 은 ‘하드웨어’ 주변단어와 ‘소프트웨어’ 주변단어들이 비슷한 분포를 보이기 때문에,
+이런 결과를 낸 것 같다.
+Word2Vec이 보존하려는 정보가 ‘동시등장 여부’이기 때문에 생기는 근본적인 한계가 아닐까 하는 생각이 든다.
+
+@
+마치며
+단어 벡터를 만들 때 등장 정보를 보존한다는 점에서는,
+Word2Vec, GloVe, Fast-text가 모두 기존 count 기반의 방법론과 본질적으로 다르지 않다.
+다만 동시 등장 정보를 벡터로 표현한 결과(representation)가,
+잠재의미분석(Latent Semantic Analysis) 등 기존 대비 매우 개선됐기 때문에,
+최근 들어 각광받고 있는 것 같다.
+
+</xmp>
+</BODY>
+</HTML>

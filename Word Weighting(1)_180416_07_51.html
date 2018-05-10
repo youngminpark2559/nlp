@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 23px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 80px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+    
+    background-color: black;
+    color:#ABBAB7;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+</HEAD>
+<BODY>
+Word Weighting(1)_180416_07_51.html
+
+<xmp>
+@
+단어 가중치 할당 방법론인 TF, IDF 에 대해 살펴보도록 하겠다.
+
+@
+Term Frequency 는 어떤 단어가 특정 문서에 얼마나 많이 쓰였는지 빈도를 나타낸다.
+많이 쓰인 단어가 중요하다는 가정을 전제로 한 수치이다.
+예컨대 A라는 단어가 doc1에서 10번, doc3에서 5번 쓰였다면 "doc1에 대한 단어A 의 TF" 는 10,
+"doc3에 대한 단어A 의 TF" 는 5가 된다.
+
+Document Frequency 란 특정 단어가 문서에 등장한 횟수를 뜻한다.
+만약 A라는 단어가 doc1, doc3에 등장했다면 "단어 A의 DF" 는 2가 된다.
+DF가 클수록 다수 문서에 쓰이는 범용적인 단어라고 볼 수 있다.
+이미 눈치채셨겠지만 TF는 같은 단어라도 문서마다 다른 값을 갖는다.
+DF는 문서가 달라지더라도 동일한 값을 지니게 된다.
+
+@
+Inverse Document Frequency 는 전체 단어수를 해당 단어의 DF로 나눈 뒤 로그를 취한 값이다.
+그 값이 클수록 특이한 단어라는 뜻이다.
+예컨대 아래 표를 본다.
+전체 문서 수(N)는 100만개이다.
+
+term       df       idf
+calpurnia  1         6
+animal     100       5
+sunday     1000      4
+fly        10000     3
+under      100000    2
+the        1000000   1
+
+calpurnia는 줄리어스 시저의 세번째 아내(B.C. 59~44)의 이름이라고 한다.
+그만큼 희귀한 단어겠다.
+위 예시 기준으로 보시면 100만개 전체 문서 가운데 단 하나의 문서에만 등장했다.
+역시 idf값도 높다.
+반대로 정관사 ‘the’를 볼까?
+100만개 모든 문서에 모두 등장한 흔한 단어이다.
+이를 idf 식에 넣어서 계산해봤더니 가장 낮은 1이 된다.
+다시 한번 말하자면 idf는 클 수록 특이한 단어라는 뜻이다.
+
+@
+TF-IDF는 TF와 IDF를 곱해 두 지표를 동시에 고려하는 가중치 산출 방법이다.
+다시 말해 어떤 단어가 얼마나 많이 쓰였는지,
+그 단어가 얼마나 특이한지를 모두 반영한 수치란 뜻이다.
+그 식은 아래와 같이 정의된다.
+$$$TF-IDF(w)=tf(w)\times \log(\frac{N}{df(w)})$$$
+
+문서가 3개, 단어가 5개 있는 학습말뭉치를 예로 들어보겠다.
+문서1의 TF, IDF, TF-IDF는 각각 아래와 같이 계산된다.
+
+img fe65fed9-527f-4fd3-b0df-8d74c0309544.png
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/fe65fed9-527f-4fd3-b0df-8d74c0309544.png.html"><xmp>
+
+위 표를 기준으로 할때 doc1을 가려내는 데 가장 중요한 역할을 하는 단어는 무엇일까요? 그 후보는 term1과 term2가 될 겁니다. 둘 모두 doc1에만 쓰였기 때문입니다. 그런데 이 중에서도 term1이 term2보다 많이 쓰였기 때문에 term1이 가장 중요한 단어가 될 겁니다. doc1의 term1에 대응하는 TF-IDF가 가장 높음을 역시 확인할 수 있습니다. 그렇다면 반대로 모든 문서에 비슷하게 많이 쓰인 term3, term4는 어떨까요? 이들에 대응하는 TF-IDF 값은 0입니다. 바꿔 말하면 term3과 term4는 모두 doc1이라는 문서를 특징짓는 데 아무런 정보를 가지고 있지 않다는 이야기입니다.
+
+@
+TF-IDF 변형들
+오래 전 제안돼 그 성능 또한 검증된 방식인 만큼 여러 변형들이 존재합니다. 대표적으로 아래와 같은 방식들이 있는데요, 붉은색 표시가 된 방식이 가장 많이 쓰인다고 합니다.
+
+img b37c322f-241c-4b32-a1a1-0ea0a6d77c52.png
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/b37c322f-241c-4b32-a1a1-0ea0a6d77c52.png.html"><xmp>
+
+</xmp>
+</BODY>
+</HTML>
