@@ -85,14 +85,14 @@ RNN의 경우 아래와 같이 입력값을 순차적으로 처리한다.
 입력값을 ‘단어’로 바꿔놓고 생각해보면 단어의 등장 순서를 보존하는 형태로 학습이 이뤄지게 됨을 알 수 있다.
 
 img cab5a035-db67-42a1-8efd-181568c102f3
-</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/cab5a035-db67-42a1-8efd-181568c102f3.png.html"><xmp>
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/cab5a035-db67-42a1-8efd-181568c102f3.png"><xmp>
 
 @
 그렇다면 CNN은 어떨까? 본래 CNN은 이미지 처리를 하기 위해 만들어진 아키텍처이다.
 아래 그림 처럼 filter 가 움직이면서 이미지의 지역적인 정보를 추출, 보존하는 형태로 학습이 이뤄지게 된다.
 
 img e0627aa9-fddf-4328-a590-03d4217e8523.gif
-</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/e0627aa9-fddf-4328-a590-03d4217e8523.gif.html"><xmp>
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/e0627aa9-fddf-4328-a590-03d4217e8523.gif"><xmp>
 
 @
 CNN을 텍스트 처리에 응용한 연구가 Yoon Kim(2014) 이다.
@@ -101,7 +101,7 @@ CNN을 텍스트 처리에 응용한 연구가 Yoon Kim(2014) 이다.
 이를 도식화하면 아래 움짤과 같다.
 
 img a0157374-3736-4edc-b70b-cb0e84df9a78.gif
-</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/a0157374-3736-4edc-b70b-cb0e84df9a78.gif.html"><xmp>
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/a0157374-3736-4edc-b70b-cb0e84df9a78.gif"><xmp>
 
 한 문장당 단어 수는 총 n개(아래 코드에서 변수명: sequence_length) 이다.
 이 단어들 각각은 p차원(변수명: embedding_size) 의 벡터이다.
@@ -129,7 +129,7 @@ https://ratsgo.github.io/natural%20language%20processing/2017/03/12/s2s/
 CNN을 활용한 문장 분류 아키텍처
 Yoon Kim(2014)의 아키텍처는 아래와 같다.
 img 2516f0b8-e315-4e33-8f61-7ceca45b2faa
-</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/2516f0b8-e315-4e33-8f61-7ceca45b2faa.png.html"><xmp>
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/2516f0b8-e315-4e33-8f61-7ceca45b2faa.png"><xmp>
 
 이 논문은 영화 리뷰 사이트에 게시된 댓글과 평점 정보를 이용해,
 각 리뷰가 긍정인지 부정인지 분류하는 모델을 만들고자 했다.
@@ -209,7 +209,7 @@ ID에 해당하는 한단어행벡터도 만들었다.
 이 박스의 크기는 (한문장길이 sequence_length * 사용자가 지정한 한단어행벡터의 차원수 embedding_size)가 된다.
 
 img 7a0681cd-6179-43af-b91a-44a35aac4c8e
-</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/7a0681cd-6179-43af-b91a-44a35aac4c8e.png.html"><xmp>
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/7a0681cd-6179-43af-b91a-44a35aac4c8e.png"><xmp>
 
 @
 위에서 논의한 내용을 텐서플로우 코드로 표현하면 다음과 같다.
@@ -235,7 +235,7 @@ embedded_chars_expanded 는 배치(batch) 단위로 CNN에 들어가게 된다.
 채널수는 1로 고정했다.
 
 img c9f295cb-c658-46ef-bb34-5b73bc7a225a
-</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/c9f295cb-c658-46ef-bb34-5b73bc7a225a.png.html"><xmp>
+</xmp><img src="https://raw.githubusercontent.com/youngmtool/nlp/master/pic/c9f295cb-c658-46ef-bb34-5b73bc7a225a.png"><xmp>
 
 # 이를 종합해 텐서플로우가 요구하는 문법으로 필터의 shape 을 정의하면 다음과 같다.
 filter_shape = [filter_size, embedding_size, 1, num_filters]
