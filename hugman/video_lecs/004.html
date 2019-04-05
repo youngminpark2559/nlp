@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+Lecture note from following lectur.
+https://www.youtube.com/watch?v=2QzwIThP8pw&list=PL9mhQYIlKEhdorgRaoASuZfgIQTakIEE9&index=4
+
+N to N problem
+
+Neural network takes N number of input,
+and it should output N number of predictions for each N number of input
+
+For example, suppose this sentence "Tom will go to the school on Friday"
+That is sentence so it can be considered as multiple inputs 
+
+And the goal is to predict tags on each token
+for example, "Tom" -> Name, "will" -> Verb, "go" -> Verb, ..., "Friday" -> Day
+
+================================================================================
+Training architecture
+
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/hugman/pics/2019_04_05_12:32:01.png' alt=''><xmp>
+
+- Token Embedding Dimension: you can select like 50 dimension, 200 dimension, etc 
+to encode one token
+
+- num_step: number of tokens which consists of one sentence
+
+- target class: in this example, class is 4 for each token
+
+================================================================================
+Training architecture simplified version by help of embedding layer
+
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/hugman/pics/2019_04_05_12:34:41.png' alt=''><xmp>
+
+3,6,2,8,...: indices of token from word dictionary
+
+3,0,0,1,...: indices of class for each token
+
+================================================================================
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/hugman/pics/2019_04_05_12:36:57.png' alt=''><xmp>
+
+You find 3 losses and average them to create one scalar loss value.
+
+================================================================================
+
+</xmp>
+   </BODY>
+</HTML>
