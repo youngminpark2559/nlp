@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+Lecture note from following lectur.
+https://www.youtube.com/watch?v=I7JpGYK3Y-Y&list=PL9mhQYIlKEhdorgRaoASuZfgIQTakIEE9&index=3
+
+================================================================================
+Unit of processing in deep learning is vector than symbol
+
+So, you have to perform "symbol to vector" preprocessing for NLP.
+
+You can use various techniques for "symbol to vector"
+such as "One-hot representation" and "Distributed representation"
+
+================================================================================
+"One-hot representation" and "Distributed representation"
+/home/young/Pictures/2019_04_05_09:30:42.png
+
+================================================================================
+"One-hot representation"
+
+Suppose your word dictionary has 1000 words
+and it has a word cat in 4th position
+
+To express word "cat", you can create vector like $$$[0,0,0,1,0,...]$$$
+
+Advantage of "One-hot representation":
+you can perfectly convert "cat in one hot vector" to "word cat", vice versa.
+
+Disadvange of "One-hot representation":
+$$$[0,0,0,1,0,...]$$$ only can represent one word "cat"
+
+But what modern neural network tries to do is 
+that it tries to consider marginal information around cat,
+such as mammals, lions, tigers, etc
+
+Human brain also activates related information like lions, tigers, mammals
+when you think of cat, as categorized memories.
+
+================================================================================
+"Distributed representation"
+All information which is related to cat is distributed into dense vector.
+
+And that one dense vector represents a word cat.
+
+================================================================================
+/home/young/Pictures/2019_04_05_09:41:13.png
+
+How can you convert natural language into meaningful mathematical vector?
+
+For that, you can use:
+- Neural Language Modeling
+- Word2Vec(Skipgram, CBOW)
+- Glove
+- Sentence2Vec
+- Doc2Vec
+- etc
+
+================================================================================
+Standard method for converting natural language into meaningful vector is Word2Vec
+
+Idea of Word2Vec is as follow
+
+Suppose a sentence "Tom eats apple"
+
+Word2Vec supposes information which represents "eats" is contained in "Tom" and "apple"
+as well as "eats" itself.
+
+You can train neural network using above assumption.
+
+--------------------------------------------------------------------------------
+Then, it means you can predict one word like "eats"
+when "Tom" and "apple" are given in training step
+/home/young/Pictures/2019_04_05_09:47:06.png
+
+This is continuous bag-of-words architecture
+
+--------------------------------------------------------------------------------
+Also you can predict multiple surrounding words like "Tom" and "apple"
+when "eats" is given in the training step.
+/home/young/Pictures/2019_04_05_09:47:51.png
+
+This is skip-gram architecture
+
+--------------------------------------------------------------------------------
+Importantly note that you can see one dense vector in hidden layer in both cases.
+
+And that dense vector is created in the process of mapping from input word to output words
+
+And that dense vector represents vector which explains "input word"
+
+================================================================================
+When you proceed above training, with getting dense vectors which represent words,
+there occured interesting discovery.
+
+1. Vector can be performed arithmetic operation
+
+2. If you perform following operation,
+King vector - Man vector + Woman vector = output vector
+
+output vector is mapped to place where Queen vector is supposed to be.
+
+================================================================================
+Token Embedding
+
+/home/young/Pictures/2019_04_05_10:09:14.png
+
+1. Token can be "word", "character", "morpheme", "phrase", etc
+
+2. Suppose "apple" as "word token"
+
+3. Find index of word apple in your dictionary which has 10000 words.
+Suppose it's located in 3rd postion.
+
+4. Create one hot representation which is 10000 dimenstion vector
+$$$[0,0,1,0,0,...]$$$
+
+5. Use embedding layer (from PyTorch or TensorFlow) 
+which converts "one hot representation" to "dense vector"
+
+================================================================================
+Translation problem can have 500 to 600 dimenstion vector to encode one token
+
+But generally, you need 50 to 200 dimensional vector to encode one token
+
+================================================================================
+Embedding lookup is implemented by using matrix multiplication
+
+/home/young/Pictures/2019_04_05_10:11:39.png
+
+(1,V): one hot representation for one token
+
+(V,D) matrix: embedding matrix
+which is initialized randomly at initial time
+And element of that matrix is filled with optimized values via training step
+to make best right dense vector
+
+(1,D): best dense vector which represents input one hot representation
+
+================================================================================
+/home/young/Pictures/2019_04_05_10:31:43.png
+
+- Number of steps: length of sentence
+In this example, you use token as character.
+T
+o
+m
+
+g
+o
+e
+s
+
+t
+o
+
+s
+c
+h
+o
+o
+l
+
+- Token Embeeding Dimension: if you choose you would use 50 dimension, 
+Token Embeeding Dimension just becomes 50 dimension
+
+- Class is 4 (positive, negative, neutral, objective) in this example
+
+================================================================================
+Many packages like PyTorch, TensorFlow abstract "embeding layer"
+
+/home/young/Pictures/2019_04_05_10:35:39.png
+
+- 3 means index for Tom from your dictionary
+6 means index for "goes" from your dictionary
+0 means padding
+...
+
+- 4 in class index means target class index like objective
+
+================================================================================
+Neural Network design
+/home/young/Pictures/2019_04_05_10:40:02.png
+
+- X: vector which is composed of indices of tokens
+
+- Embedding Lookup: is trainable which converts input vector into dense vector
+
+- Dropout layer
+
+- RNN layer
+
+- Fully connected layer which outputs 4 values which represent one predicted class
+
+- Loss function
+
+================================================================================
+      
+</xmp>
+   </BODY>
+</HTML>
