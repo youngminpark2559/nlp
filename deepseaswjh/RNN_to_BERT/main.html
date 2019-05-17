@@ -55,7 +55,7 @@ https://www.slideshare.net/deepseaswjh/rnn-bert
 ================================================================================
 RNN
 
-/home/young/Pictures/2019_05_17_11:49:34.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_11:49:34.png' alt=''><xmp>
 
 - $$$x_0, x_1, x_2, \cdots$$$: input tokens like I, go, to, ...
 - 2 arrows from cells which are marked by "A": outputs
@@ -69,10 +69,10 @@ There are 2 trainable weights; W (for recurrent layers) and U (for input layers)
 
 https://medium.com/deep-math-machine-learning-ai/chapter-10-deepnlp-recurrent-neural-networks-with-math-c4a6846a50a2
 
-/home/young/Pictures/2019_05_17_11:54:10.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_11:54:10.png' alt=''><xmp>
 
 ================================================================================
-/home/young/Pictures/2019_05_17_11:55:30.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_11:55:30.png' alt=''><xmp>
 
 $$$a^{(t)} = b+W h^{(t-1)} + Ux^{(t)}$$$
 $$$a^{(t)}$$$: output at time t
@@ -94,7 +94,7 @@ $$$y^{(t)}=softmax(o^{(t)})$$$: output in the last output layer after softmax
 ================================================================================
 Various RNN structures
 
-/home/young/Pictures/2019_05_17_12:01:42.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:01:42.png' alt=''><xmp>
 
 - Red: input structure
 - Green: hidden structure
@@ -103,17 +103,17 @@ Various RNN structures
 ================================================================================
 LSTM (Long Shot Term Momory)
 
-/home/young/Pictures/2019_05_17_12:02:59.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:02:59.png' alt=''><xmp>
 
 - Intensity of data becomes vague as training goes
 
 ================================================================================
-/home/young/Pictures/2019_05_17_12:03:33.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:03:33.png' alt=''><xmp>
 
 LSTM memorizes "important data" up to the end of training
 
 ================================================================================
-/home/young/Pictures/2019_05_17_12:04:18.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:04:18.png' alt=''><xmp>
 
 - LSTM means "specially designed RNN cell"
 - LSTM has 8 trainable parameters (4 for recurrent layers + 4 for input layers)
@@ -127,14 +127,14 @@ Weakness of RNN
 ================================================================================
 Seq2Seq to overcome weakness of RNN
 
-/home/young/Pictures/2019_05_17_12:06:40.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:06:40.png' alt=''><xmp>
 
 - Seq2Seq = Encoder_LSTM + Decoder_LSTM
 
 ================================================================================
 Structure of Seq2Seq
 
-/home/young/Pictures/2019_05_17_12:07:37.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:07:37.png' alt=''><xmp>
 
 - Step1: process "input sentence" by encoder, creating "feature vector"
 - Step2: process "feature vector" by decoder, creating "output sentence"
@@ -144,7 +144,7 @@ Weakness of LSTM driven Seq2Seq
 
 - It's lack of capability with only "gates" which adjust the flow of information
 - "Gates": "removing gate", "input gate", "output gate"
-/home/young/Pictures/2019_05_17_12:11:08.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:11:08.png' alt=''><xmp>
 
 - Due to above limitation of gates,
 if input sentence becomes longer, LSTM-Seq2Seq becomes confused
@@ -155,10 +155,10 @@ Attention
 Attention module focuses on important part from the sentence
 "Important part" is directly passed to "decoder"
 
-/home/young/Pictures/2019_05_17_12:13:20.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:13:20.png' alt=''><xmp>
 
 ================================================================================
-/home/young/Pictures/2019_05_17_12:14:01.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:14:01.png' alt=''><xmp>
 
 - When decorder creates output words,
 "attention layer" decides what information "decoder" should take
@@ -172,7 +172,7 @@ Transformer
 ================================================================================
 Transformer does "self-attention"
 
-/home/young/Pictures/2019_05_17_12:18:44.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:18:44.png' alt=''><xmp>
 
 ================================================================================
 How "transformer" does the "self-attention"?
@@ -183,10 +183,10 @@ How "transformer" does the "self-attention"?
   - SoftMax: select important word which transformer will pay attention to
   - (import word vector after softmaxt) $$$\cdot$$$ (original word information $$$V$$$)
 
-/home/young/Pictures/2019_05_17_12:25:24.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:25:24.png' alt=''><xmp>
 
 ================================================================================
-/home/young/Pictures/2019_05_17_12:26:00.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:26:00.png' alt=''><xmp>
 
 - Illustration of how "Scaled Dot-Product Attention module" works
 
@@ -199,22 +199,22 @@ How "transformer" does the "self-attention"?
 It turns out "Thinking" is important word and transformer will pay attention to "Thinking"
 
 ================================================================================
-/home/young/Pictures/2019_05_17_12:30:26.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:30:26.png' alt=''><xmp>
 
 ================================================================================
 Encoder and Decoder structure in Transformer
 
 - Multiple encoders
-/home/young/Pictures/2019_05_17_12:30:59.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:30:59.png' alt=''><xmp>
 
 - Multiple decoders
-/home/young/Pictures/2019_05_17_12:31:26.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:31:26.png' alt=''><xmp>
 
 - Fully connected layer and Softmax layer
-/home/young/Pictures/2019_05_17_12:31:51.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:31:51.png' alt=''><xmp>
 
 - Entire view
-/home/young/Pictures/2019_05_17_12:32:05.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:32:05.png' alt=''><xmp>
 
 ================================================================================
 BERT (Bidirectional Encoder Representations from Transformers)
@@ -226,7 +226,7 @@ BERT (Bidirectional Encoder Representations from Transformers)
 ================================================================================
 Transfer learning (or fine tuning)
 
-/home/young/Pictures/2019_05_17_12:36:34.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:36:34.png' alt=''><xmp>
 
 - Dataset: ImageNet
 - Randomly initialized weight in the neural network
@@ -240,7 +240,7 @@ by using ImageNet dataset which has 100 classes
 
 ================================================================================
 Tranfer learning NLP models in 2018
-/home/young/Pictures/2019_05_17_12:40:50.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:40:50.png' alt=''><xmp>
 
 ================================================================================
 Structure of BERT
@@ -261,27 +261,27 @@ How to pretrain BERT network?
 
 Method1: mask some words
 
-/home/young/Pictures/2019_05_17_12:46:32.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:46:32.png' alt=''><xmp>
 
 * Details
 - Input sentence with special tokens like CLS, SEP
-/home/young/Pictures/2019_05_17_12:47:24.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:47:24.png' alt=''><xmp>
 
 - Randomly mask 15% of words of the input sentence
-/home/young/Pictures/2019_05_17_12:48:22.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:48:22.png' alt=''><xmp>
 - improvisation is replaced with "MASK" token
 - Max length of input data: 512
 
 - Create output vector (512 dimension) from BERT network
-/home/young/Pictures/2019_05_17_12:49:39.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:49:39.png' alt=''><xmp>
 
 - Pass output vector into FFNN+Softmax layer 
 to create probability values (2500 million number of probability values)
-/home/young/Pictures/2019_05_17_12:50:06.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:50:06.png' alt=''><xmp>
 
 - Following stands for all English words (like 2500 million)
 from Aardvark to Zyzzyva
-/home/young/Pictures/2019_05_17_12:52:03.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:52:03.png' alt=''><xmp>
 
 - masked word has high probability value
 and it means BERT model could predict "masked word" correctly,
@@ -292,7 +292,7 @@ How to pretrain BERT network?
 
 Method2: predict next sentence
 
-/home/young/Pictures/2019_05_17_12:57:02.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_12:57:02.png' alt=''><xmp>
 
 * Details
 
@@ -300,46 +300,46 @@ Method2: predict next sentence
 Input data has CLS (starting position), MASK (masked words), SEP (separation to the 2 sentences) tokens
 
 - Perform tokenization on the input sentence
-/home/young/Pictures/2019_05_17_13:05:31.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:05:31.png' alt=''><xmp>
 - Max length of input sentence is 512
 
 - Use BERT network
-/home/young/Pictures/2019_05_17_13:06:14.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:06:14.png' alt=''><xmp>
 - Get output vector (512 dimension)
 
 - Pass output vector into FFNN+Softmax layer
-/home/young/Pictures/2019_05_17_13:07:07.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:07:07.png' alt=''><xmp>
 
 - Given 2 sentence is "continous sentence"?
-/home/young/Pictures/2019_05_17_13:07:54.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:07:54.png' alt=''><xmp>
 
 ================================================================================
 Embedding input data for BERT
 
 Embedding_for_BERT = token_embedding + segment_embedding + position_embedding
 
-/home/young/Pictures/2019_05_17_13:09:58.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:09:58.png' alt=''><xmp>
 
 * Details
 - Raw input data before "BERT embedding"
-/home/young/Pictures/2019_05_17_13:10:34.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:10:34.png' alt=''><xmp>
 - CLS: starting position, or class
 - SEP: to separate 2 sentence
 
 - Apply "token embedding" into input data
-/home/young/Pictures/2019_05_17_13:12:02.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:12:02.png' alt=''><xmp>
 
 - Apply "segment embedding"
-/home/young/Pictures/2019_05_17_13:13:05.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:13:05.png' alt=''><xmp>
 
 - Apply "position embedding"
-/home/young/Pictures/2019_05_17_13:13:23.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:13:23.png' alt=''><xmp>
 
 ================================================================================
 Use transfer learning on pretrained BERT network
 
 - Classify 2 sentences
-/home/young/Pictures/2019_05_17_13:19:01.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:19:01.png' alt=''><xmp>
 
 - CLS: token
 - Sentence1
@@ -352,7 +352,7 @@ Use transfer learning on pretrained BERT network
 ================================================================================
 - Q and A model
 
-/home/young/Pictures/2019_05_17_13:20:58.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:20:58.png' alt=''><xmp>
 
 - CLS: token
 - Sentence as question
@@ -364,28 +364,29 @@ Use transfer learning on pretrained BERT network
 ================================================================================
 - Classify "one given sentence"
 
-/home/young/Pictures/2019_05_17_13:22:17.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:22:17.png' alt=''><xmp>
 
 ================================================================================
 - POS tagging on single sentence
 
-/home/young/Pictures/2019_05_17_13:22:51.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:22:51.png' alt=''><xmp>
 
 ================================================================================
 SQuAD: Standford Question Answering Dataset
 
 Given paragraph
-/home/young/Pictures/2019_05_17_13:24:31.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:24:31.png' alt=''><xmp>
 
 Question
-/home/young/Pictures/2019_05_17_13:24:53.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:24:53.png' alt=''><xmp>
 
 Ground truth answer which BERT should make
-/home/young/Pictures/2019_05_17_13:25:27.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:25:27.png' alt=''><xmp>
 
 ================================================================================
 BERT words well than other models
-/home/young/Pictures/2019_05_17_13:26:15.png
+
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/deepseaswjh/RNN_to_BERT/pics/2019_05_17_13:26:15.png' alt=''><xmp>
 
 ================================================================================
 
