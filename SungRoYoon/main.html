@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+http://biz.chosun.com/site/data/html_dir/2019/02/08/2019020801834.html
+
+================================================================================
+AI language model
+
+- RNN
+  - Order of input data is important
+  - Information of first words generally disappear as train proceeds
+  - So, RNN couldn't fully understand the sentence as the sentence becomes longer and longer
+
+- Attention-module based RNN
+  - Attention-module dynamically pays more attention to important words
+  regarless of the order of input data
+
+- Transformer
+  - self-attention
+  - Human doesn't intervene the process of attention
+
+- BERT
+  - Use transformer in bidirectional way
+  - doesn't use RNN structure (RNN is slow)
+  - Performance:
+  - Train "Lord of the ring"
+  - Ask a question: where is the ring?
+  - BERT can make a answer
+
+================================================================================
+
+</xmp>
+   </BODY>
+</HTML>
