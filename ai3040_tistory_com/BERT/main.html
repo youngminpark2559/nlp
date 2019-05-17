@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+https://ai3040.tistory.com/2
+
+================================================================================
+Embedding by using word
+- Word2Vec: similar meaning words are located in near area in vector space
+- FastTest: it makes training faster
+
+Embedding by using sentence
+- CoVe: aninal bat and baseball bat are distinguished through sentence context
+- ELMo
+
+================================================================================
+Transformer (Google, 2017)
+- Self attention driven encoder
+- Transformer overcomes limitation of Seq2Seq model
+
+================================================================================
+Self attention
+- Finds trainable weights of Q, K, V
+- Find attention scores from Q, K
+- Apply found score into V, and find Z
+- Make many pairs of Q, K, V
+- Use mask
+  - Encoder mask: optional, mask some tokens (this is used in BERT)
+  - Decoder mask: to predict next sentence (this is not used in BERT)
+
+================================================================================
+Effect of self-attention
+
+- Model can get correlational information of words
+
+================================================================================
+Transformer structure
+
+input --is passed into--> self-attention module --> output_from_self_attention
+
+output_from_self_attention --is passed into--> forward network
+
+================================================================================
+BERT
+
+How to use BERT
+- Feture based usage
+Pretrained model: it has optimized feature vector
+You can use "optimized feature vector" for your task
+
+- Fine tuning based usage
+You load pretrained model
+You retrain pretrained model
+
+================================================================================
+Structure of BERT
+
+BERT Base: 12 number of transformers
+BERT Large: 24 number of transformers
+
+================================================================================
+Learning method
+
+- Masked language model
+  - It considers "context in bidirectional way"
+  - Randomly mask some tokens
+  - When you use find-tuning, you use "randomly not-use mask"
+- Next sentence prediction
+  - Task of answering masked words
+  - Model should distinguish sentences from the source sentence
+  - Source sentences: 50% sentences are related sentence, other 50% are non-related
+
+================================================================================
+Input data for BERT
+
+- Concatenate "2 sentences" and "special tokens like SEP, CLS,"
+- Concatenated sentence should be less than 512 words, by considering capacity of transformer
+- You tokenize sentence by using "word piece tokenizer"
+- "word piece tokenizer"
+  - token embedding + segment embedding + position embedding
+  - zero paddingg for empty spaces
+
+================================================================================
+How to use BERT in fine-tuning usage
+
+- You load pretrained BERT model
+- When you use 2 sentences, you should put SEP token into the concatenated sentece
+
+================================================================================
+How to use BERT in faeture based usage
+
+- You input "sentence"
+- You get weight value of each word of the sentence
+- You put "weight value of each word" into any applications
+
+================================================================================
+Preprocess for BERT
+
+- FullTokenizer = BasicTokenizer + WordpieceTokenizer 
+- Input data: CLS + Q_sentence + SEP + context_sentece + SEP
+
+</xmp>
+   </BODY>
+</HTML>
