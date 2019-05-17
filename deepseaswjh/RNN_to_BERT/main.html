@@ -1,0 +1,394 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+img {
+ width:900px;
+}
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+https://www.slideshare.net/deepseaswjh/rnn-bert
+
+================================================================================
+RNN
+
+/home/young/Pictures/2019_05_17_11:49:34.png
+
+- $$$x_0, x_1, x_2, \cdots$$$: input tokens like I, go, to, ...
+- 2 arrows from cells which are marked by "A": outputs
+
+- Meaning
+- Output from previous cell affect the training continuously
+
+
+================================================================================
+There are 2 trainable weights; W (for recurrent layers) and U (for input layers)
+
+https://medium.com/deep-math-machine-learning-ai/chapter-10-deepnlp-recurrent-neural-networks-with-math-c4a6846a50a2
+
+/home/young/Pictures/2019_05_17_11:54:10.png
+
+================================================================================
+/home/young/Pictures/2019_05_17_11:55:30.png
+
+$$$a^{(t)} = b+W h^{(t-1)} + Ux^{(t)}$$$
+$$$a^{(t)}$$$: output at time t
+$$$b$$$: bias
+$$$W$$$: trainable parameter for recurrent layers
+$$$h^{(t-1)}$$$: output from previous cell
+$$$x^{(t)}$$$: input data at time t
+$$$U$$$: trainable parameter for input layers
+
+$$$h^{(t)}=tanh(a^{(t)})$$$
+$$$tanh()$$$: activation function
+$$$h^{(t)}$$$: output from the cells
+
+$$$o^{(t)}=c+Vh^{(t)}$$$
+$$$o^{(t)}$$$: output in the last output layer
+
+$$$y^{(t)}=softmax(o^{(t)})$$$: output in the last output layer after softmax
+
+================================================================================
+Various RNN structures
+
+/home/young/Pictures/2019_05_17_12:01:42.png
+
+- Red: input structure
+- Green: hidden structure
+- Blue: output structure
+
+================================================================================
+LSTM (Long Shot Term Momory)
+
+/home/young/Pictures/2019_05_17_12:02:59.png
+
+- Intensity of data becomes vague as training goes
+
+================================================================================
+/home/young/Pictures/2019_05_17_12:03:33.png
+
+LSTM memorizes "important data" up to the end of training
+
+================================================================================
+/home/young/Pictures/2019_05_17_12:04:18.png
+
+- LSTM means "specially designed RNN cell"
+- LSTM has 8 trainable parameters (4 for recurrent layers + 4 for input layers)
+
+================================================================================
+Weakness of RNN
+
+- RNN considers only "previous status" + "current status"
+- RNN doesn't consider "entire context" in the training
+
+================================================================================
+Seq2Seq to overcome weakness of RNN
+
+/home/young/Pictures/2019_05_17_12:06:40.png
+
+- Seq2Seq = Encoder_LSTM + Decoder_LSTM
+
+================================================================================
+Structure of Seq2Seq
+
+/home/young/Pictures/2019_05_17_12:07:37.png
+
+- Step1: process "input sentence" by encoder, creating "feature vector"
+- Step2: process "feature vector" by decoder, creating "output sentence"
+
+================================================================================
+Weakness of LSTM driven Seq2Seq
+
+- It's lack of capability with only "gates" which adjust the flow of information
+- "Gates": "removing gate", "input gate", "output gate"
+/home/young/Pictures/2019_05_17_12:11:08.png
+
+- Due to above limitation of gates,
+if input sentence becomes longer, LSTM-Seq2Seq becomes confused
+
+================================================================================
+Attention
+
+Attention module focuses on important part from the sentence
+"Important part" is directly passed to "decoder"
+
+/home/young/Pictures/2019_05_17_12:13:20.png
+
+================================================================================
+/home/young/Pictures/2019_05_17_12:14:01.png
+
+- When decorder creates output words,
+"attention layer" decides what information "decoder" should take
+
+================================================================================
+Transformer
+
+- LSTM is not used
+- Attention module consisits of "Encoder-Decoder" model
+
+================================================================================
+Transformer does "self-attention"
+
+/home/young/Pictures/2019_05_17_12:18:44.png
+
+================================================================================
+How "transformer" does the "self-attention"?
+
+- Use Scaled Dot-Product Attention module
+  - Each word is converted into Q,K,V
+  - Perform: (each word $$$Q$$$) $$$\cdot$$$ (other word $$$K$$$)
+  - SoftMax: select important word which transformer will pay attention to
+  - (import word vector after softmaxt) $$$\cdot$$$ (original word information $$$V$$$)
+
+/home/young/Pictures/2019_05_17_12:25:24.png
+
+================================================================================
+/home/young/Pictures/2019_05_17_12:26:00.png
+
+- Illustration of how "Scaled Dot-Product Attention module" works
+
+- Input: 2 words
+- Embedding: feature vector from 2 words
+- Create Q,K,V vector from 2 feature vectors
+- Score: $$$Q \cdot K$$$
+- Divide by 8: maybe "Scale module"
+- Softmax: 2 softmaxed-numbers from 2 word
+It turns out "Thinking" is important word and transformer will pay attention to "Thinking"
+
+================================================================================
+/home/young/Pictures/2019_05_17_12:30:26.png
+
+================================================================================
+Encoder and Decoder structure in Transformer
+
+- Multiple encoders
+/home/young/Pictures/2019_05_17_12:30:59.png
+
+- Multiple decoders
+/home/young/Pictures/2019_05_17_12:31:26.png
+
+- Fully connected layer and Softmax layer
+/home/young/Pictures/2019_05_17_12:31:51.png
+
+- Entire view
+/home/young/Pictures/2019_05_17_12:32:05.png
+
+================================================================================
+BERT (Bidirectional Encoder Representations from Transformers)
+
+- Deep learning language model which uses pretraining to have general language understanding
+
+- BERT is composed of transformers
+
+================================================================================
+Transfer learning (or fine tuning)
+
+/home/young/Pictures/2019_05_17_12:36:34.png
+
+- Dataset: ImageNet
+- Randomly initialized weight in the neural network
+- Trainable parameters in the network is trained 
+by using ImageNet dataset which has 100 classes
+- Save trained parameter into the file
+- Prepare new data which has more classes
+- Append new layer which has more output classes
+- Load trained parameter and fill the loaded parameter values into network
+- Perform training step over new dataset
+
+================================================================================
+Tranfer learning NLP models in 2018
+/home/young/Pictures/2019_05_17_12:40:50.png
+
+================================================================================
+Structure of BERT
+
+- Use only "encoder network" from "transformer"
+- BERT Base: 12 number of tranformer blocks
+- BERT Large: 24 number of tranformer blocks
+
+================================================================================
+Pretrain BERT to give general language understanding to the BERT
+
+Dataset
+- BooksCorpus: 800 million of words
+- Wikipedia: 2500 million of words
+
+================================================================================
+How to pretrain BERT network?
+
+Method1: mask some words
+
+/home/young/Pictures/2019_05_17_12:46:32.png
+
+* Details
+- Input sentence with special tokens like CLS, SEP
+/home/young/Pictures/2019_05_17_12:47:24.png
+
+- Randomly mask 15% of words of the input sentence
+/home/young/Pictures/2019_05_17_12:48:22.png
+- improvisation is replaced with "MASK" token
+- Max length of input data: 512
+
+- Create output vector (512 dimension) from BERT network
+/home/young/Pictures/2019_05_17_12:49:39.png
+
+- Pass output vector into FFNN+Softmax layer 
+to create probability values (2500 million number of probability values)
+/home/young/Pictures/2019_05_17_12:50:06.png
+
+- Following stands for all English words (like 2500 million)
+from Aardvark to Zyzzyva
+/home/young/Pictures/2019_05_17_12:52:03.png
+
+- masked word has high probability value
+and it means BERT model could predict "masked word" correctly,
+and it means BERT mdoel could understand general language model
+
+================================================================================
+How to pretrain BERT network?
+
+Method2: predict next sentence
+
+/home/young/Pictures/2019_05_17_12:57:02.png
+
+* Details
+
+- Input data: 2 sentences (sentence A + sentence B)
+Input data has CLS (starting position), MASK (masked words), SEP (separation to the 2 sentences) tokens
+
+- Perform tokenization on the input sentence
+/home/young/Pictures/2019_05_17_13:05:31.png
+- Max length of input sentence is 512
+
+- Use BERT network
+/home/young/Pictures/2019_05_17_13:06:14.png
+- Get output vector (512 dimension)
+
+- Pass output vector into FFNN+Softmax layer
+/home/young/Pictures/2019_05_17_13:07:07.png
+
+- Given 2 sentence is "continous sentence"?
+/home/young/Pictures/2019_05_17_13:07:54.png
+
+================================================================================
+Embedding input data for BERT
+
+Embedding_for_BERT = token_embedding + segment_embedding + position_embedding
+
+/home/young/Pictures/2019_05_17_13:09:58.png
+
+* Details
+- Raw input data before "BERT embedding"
+/home/young/Pictures/2019_05_17_13:10:34.png
+- CLS: starting position, or class
+- SEP: to separate 2 sentence
+
+- Apply "token embedding" into input data
+/home/young/Pictures/2019_05_17_13:12:02.png
+
+- Apply "segment embedding"
+/home/young/Pictures/2019_05_17_13:13:05.png
+
+- Apply "position embedding"
+/home/young/Pictures/2019_05_17_13:13:23.png
+
+================================================================================
+Use transfer learning on pretrained BERT network
+
+- Classify 2 sentences
+/home/young/Pictures/2019_05_17_13:19:01.png
+
+- CLS: token
+- Sentence1
+- SEP: token
+- Sentence2
+- Preprocess input data
+- Pass input data into BERT network
+- Get class from C
+
+================================================================================
+- Q and A model
+
+/home/young/Pictures/2019_05_17_13:20:58.png
+
+- CLS: token
+- Sentence as question
+- SEP: token
+- Sentence as answer paragraph
+- Preprocess input data
+- Pass input data into BERT network
+
+================================================================================
+- Classify "one given sentence"
+
+/home/young/Pictures/2019_05_17_13:22:17.png
+
+================================================================================
+- POS tagging on single sentence
+
+/home/young/Pictures/2019_05_17_13:22:51.png
+
+================================================================================
+SQuAD: Standford Question Answering Dataset
+
+Given paragraph
+/home/young/Pictures/2019_05_17_13:24:31.png
+
+Question
+/home/young/Pictures/2019_05_17_13:24:53.png
+
+Ground truth answer which BERT should make
+/home/young/Pictures/2019_05_17_13:25:27.png
+
+================================================================================
+BERT words well than other models
+/home/young/Pictures/2019_05_17_13:26:15.png
+
+================================================================================
+
+</xmp>
+   </BODY>
+</HTML>
