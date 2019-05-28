@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+/* img {
+ width:900px;
+} */
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+
+https://stackabuse.com/python-for-nlp-vocabulary-and-phrase-matching-with-spacy/
+
+================================================================================
+techniques=[
+  tokenization,stemming,lemmatization,parts_of_speech_tagging,
+  named_entity_recognition,noun_parsing]
+
+output=techniques(INDIVIDUAL_WORDS)
+
+================================================================================
+Pattern matching
+
+defined_patterns="xxxxx"
+
+text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliis esse maiora, illud dubium, ad id, quod summum bonum dicitis, ecquaenam possit fieri accessio. Respondent extrema primis, media utrisque, omnia omnibus. Sequitur disserendi ratio cognitioque naturae"
+
+matched_phrases=pattern_matching(text,defined_patterns)
+
+================================================================================
+Same functionality
+
+reg_expresson="pattern_to_extract_POS_tags"
+
+text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliis esse maiora, illud dubium, ad id, quod summum bonum dicitis, ecquaenam possit fieri accessio. Respondent extrema primis, media utrisque, omnia omnibus. Sequitur disserendi ratio cognitioque naturae"
+
+matched_POS_tags=find(reg_expresson,text)
+
+================================================================================
+1. Rule-Based Matching
+
+import spacy  
+nlp = spacy.load('en_core_web_sm')
+from spacy.matcher import Matcher  
+
+# @ Creating Matcher Object
+m_tool = Matcher(nlp.vocab)  
+
+# @ Defining Patterns
+# @ Patterns are used to filter "similar phrases" from the "given text"
+# @ Suppose we want to find the following phrases
+
+# Pattern: quickbrownfox
+p1 = [{'LOWER': 'quickbrownfox'}]
+
+# Pattern: quick-brown-fox
+p2 = [{'LOWER': 'quick'}, {'IS_PUNCT': True}, {'LOWER': 'brown'}, {'IS_PUNCT': True}, {'LOWER': 'fox'}]
+
+# Pattern: quick brown fox
+p3 = [{'LOWER': 'quick'}, {'LOWER': 'brown'}, {'LOWER': 'fox'}]
+
+# Pattern: quick brownfox
+p4 =  [{'LOWER': 'quick'}, {'LOWER': 'brownfox'}]
+
+# The token attribute LOWER defines that the phrase should be converted into lower case before matching.
+
+# Add patterns into Matcher object
+# You can use whatever string for QBF which is the name of matcher
+m_tool.add('QBF', None, p1, p2, p3, p4)  
+
+# Prepare sentence
+sentence = nlp(u'The quick-brown-fox jumps over the lazy dog. The quick brown fox eats well. the quickbrownfox is dead. the dog misses the quick brownfox')
+
+# Pass sentence to Matcher object
+# Output is all the ids of the phrases which are matched in the document,
+# along with their starting and ending positions in the document
+phrase_matches=m_tool(sentence)
+print(phrase_matches)
+# [(12825528024649263697, 1, 6), 
+#  (12825528024649263697, 13, 16), 
+#  (12825528024649263697, 21, 22), 
+#  (12825528024649263697, 29, 31)]
+
+# Four phrases have been matched. 
+# 12825528024649263697: the id of the phrase matched
+# 1,6: starting and ending positions of the phrase
+
+# Id/starting_position/ending_position to string value
+for match_id, start, end in phrase_matches:  
+    string_id = nlp.vocab.strings[match_id]  
+    span = sentence[start:end]                   
+    print(match_id, string_id, start, end, span.text)
+
+# 12825528024649263697 QBF 1 6 quick-brown-fox  
+# 12825528024649263697 QBF 13 16 quick brown fox  
+# 12825528024649263697 QBF 21 22 quickbrownfox  
+# 12825528024649263697 QBF 29 31 quick brownfox  
+
+================================================================================
+1-1. More Options for Rule-Based Matching
+
+m_tool.remove('QBF')  
+
+# Pattern: "quick--brown--fox" or "quick-brown---fox" by using *
+p1=[
+  {'LOWER':'quick'},{'IS_PUNCT':True,'OP':'*'},
+  {'LOWER':'brown'},{'IS_PUNCT':True,'OP':'*'},{'LOWER': 'fox'}]  
+
+m_tool.add('QBF', None, p1)  
+
+
+The pattern p1 will match "all the phrases" 
+where there are one or more punctuations in the phrase quick brown fox. 
+
+sentence = nlp(u'The quick--brown--fox jumps over the quick-brown---fox')
+
+# What you should match:
+quick--brown--fox and quick-brown---fox
+
+phrase_matches=m_tool(sentence)
+
+for match_id, start, end in phrase_matches:  
+    string_id = nlp.vocab.strings[match_id]  
+    span = sentence[start:end]                   
+    print(match_id, string_id, start, end, span.text)
+
+# 12825528024649263697 QBF 1 6 quick--brown--fox  
+# 12825528024649263697 QBF 10 15 quick-brown---fox  
+
+================================================================================
+2. Phrase-based matching
+
+# Instead of defining rules, we can directly specify the phrases that we are looking for. This is a more efficient way of phrase matching.
+
+# Goal: phrase matching inside a Wikipedia article on Artificial intelligence.
+
+# Parse the Wikipedia article:
+import bs4 as bs  
+import urllib.request  
+import re  
+import nltk
+
+scrapped_data = urllib.request.urlopen('https://en.wikipedia.org/wiki/Artificial_intelligence')
+
+article = scrapped_data .read()
+
+# c parsed_article: Wikipedia text
+parsed_article = bs.BeautifulSoup(article,'lxml')
+
+paragraphs = parsed_article.find_all('p')
+
+article_text = ""
+
+for p in paragraphs:  
+    article_text += p.text
+
+processed_article = article_text.lower()  
+processed_article = re.sub('[^a-zA-Z]', ' ', processed_article )  
+processed_article = re.sub(r'\s+', ' ', processed_article)
+
+# Phrase-based matching steps
+
+import spacy  
+from spacy.matcher import PhraseMatcher  
+
+nlp = spacy.load('en_core_web_sm')
+
+# Create PhraseMatcher Object
+phrase_matcher = PhraseMatcher(nlp.vocab)
+
+# Create a list of phrases to match 
+# Then convert the list to spaCy NLP documents
+phrases = ['machine learning', 'robots', 'intelligent agents']
+
+patterns = [nlp(text) for text in phrases]
+
+# Finally, add your phrase list to phrase_matcher
+# name of phrase_matcher is AI.
+phrase_matcher.add('AI', None, *patterns)
+
+# Convert processed_article text into spaCy text format
+sentence=nlp(processed_article)
+
+# Apply phrase_matcher to sentence
+matched_phrases=phrase_matcher(sentence)  
+
+print("matched_phrases",matched_phrases)
+# [(5530044837203964789, 37, 39),
+#  (5530044837203964789, 402, 404),
+#  (5530044837203964789, 693, 694),
+#  (5530044837203964789, 1284, 1286),
+#  (5530044837203964789, 3059, 3061),
+#  (5530044837203964789, 3218, 3220),
+#  (5530044837203964789, 3753, 3754),
+#  (5530044837203964789, 5212, 5213),
+#  (5530044837203964789, 5287, 5288),
+#  (5530044837203964789, 6769, 6771),
+#  (5530044837203964789, 6781, 6783),
+#  (5530044837203964789, 7496, 7498),
+#  (5530044837203964789, 7635, 7637),
+#  (5530044837203964789, 8002, 8004),
+#  (5530044837203964789, 9461, 9462),
+#  (5530044837203964789, 9955, 9957),
+#  (5530044837203964789, 10784, 10785),
+#  (5530044837203964789, 11250, 11251),
+#  (5530044837203964789, 12290, 12291),
+#  (5530044837203964789, 12411, 12412),
+#  (5530044837203964789, 12455, 12456)]
+
+
+for match_id, start, end in matched_phrases:  
+    string_id = nlp.vocab.strings[match_id]  
+    span = sentence[start:end]                   
+    print(match_id, string_id, start, end, span.text)
+
+# 5530044837203964789 AI 37 39 intelligent agents  
+# 5530044837203964789 AI 402 404 machine learning  
+# 5530044837203964789 AI 693 694 robots  
+# 5530044837203964789 AI 1284 1286 machine learning  
+# 5530044837203964789 AI 3059 3061 intelligent agents  
+# 5530044837203964789 AI 3218 3220 machine learning  
+# 5530044837203964789 AI 3753 3754 robots  
+# 5530044837203964789 AI 5212 5213 robots  
+# 5530044837203964789 AI 5287 5288 robots  
+# 5530044837203964789 AI 6769 6771 machine learning  
+# 5530044837203964789 AI 6781 6783 machine learning  
+# 5530044837203964789 AI 7496 7498 machine learning  
+# 5530044837203964789 AI 7635 7637 machine learning  
+# 5530044837203964789 AI 8002 8004 machine learning  
+# 5530044837203964789 AI 9461 9462 robots  
+# 5530044837203964789 AI 9955 9957 machine learning  
+# 5530044837203964789 AI 10784 10785 robots  
+# 5530044837203964789 AI 11250 11251 robots  
+# 5530044837203964789 AI 12290 12291 robots  
+# 5530044837203964789 AI 12411 12412 robots  
+# 5530044837203964789 AI 12455 12456 robots  
+
+# You can see "all the three phrases" that we tried to search 
+# along with their "start" and "end index" and the "string ids".
+
+================================================================================
+Stop Words in spaCy
+
+# The spaCy library contains 305 stop words. 
+# Depending upon our requirements, we can add or remove stop words from the spaCy library.
+
+# default spaCy stop words
+import spacy
+sp = spacy.load('en_core_web_sm')
+print(sp.Defaults.stop_words)
+# {'less', 'except', 'top', 'me', 'three', 'fifteen', 'a', 'is', 'those', 'all', 'then
+
+# Check stop word
+sp.vocab['wonder'].is_stop  
+
+sp.Defaults.stop_words.add('wonder')  
+sp.vocab['wonder'].is_stop = True  
+
+</xmp>
+   </BODY>
+</HTML>
