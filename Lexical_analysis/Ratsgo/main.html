@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+/* img {
+ width:900px;
+} */
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+
+https://ratsgo.github.io/natural%20language%20processing/2017/03/22/lexicon/
+/mnt/1T-5e7/mycodehtml/NLP/Lexical_analysis/Ratsgo/main.html
+
+================================================================================
+NLP
+/home/young/Pictures/2019_06_03_11:38:28.png
+
+================================================================================
+Linguistics = Phonology + Morphology + Syntax + Semantics
+
+================================================================================
+Phonology
+- researches voice
+/home/young/Pictures/2019_06_03_11:39:52.png
+
+================================================================================
+Morphology
+- researches "word" and "morphim"
+/home/young/Pictures/2019_06_03_11:40:29.png
+
+================================================================================
+Syntax
+- researches grammar
+/home/young/Pictures/2019_06_03_11:41:13.png
+
+================================================================================
+Semantics
+- researches contextual information
+/home/young/Pictures/2019_06_03_11:41:39.png
+
+================================================================================
+NLP in computer
+
+/home/young/Pictures/2019_06_03_11:42:37.png
+
+================================================================================
+Lexical Analysis step
+
+/home/young/Pictures/2019_06_03_11:43:43.png
+
+================================================================================
+POS(Part Of Speech) tagging
+
+"Word": "POS"
+
+================================================================================
+NER(Named Entity Recognition)
+
+Classify "unique noun"
+
+================================================================================
+Co-reference
+
+Compares "previous word and phrase" to "current word and phrasee"
+Are they same entity?
+
+================================================================================
+Basic dependencies
+
+Unlike the previous method where it analyzes sentence by using element of each word (gramatically),
+basic dependencies uses dependent relationship between words,
+to analyze sentence
+
+================================================================================
+/home/young/Pictures/2019_06_03_11:56:38.png
+
+================================================================================
+Lexical analysis
+
+- Sentence splitting
+- Tokenize
+- morphological analysis
+- POS tagging
+
+================================================================================
+Case1: sentence splitting is required
+Case2: sentence splitting is optional (topic modeling case)
+
+Before sentence spliting: sentence_a. sentence_b. sentence_c?
+After sentence splitting: [sentence_a.], [sentence_b.], [sentence_c?]
+
+================================================================================
+Tokenize
+
+Morphim $$$\subset$$$ Word $$$\subset$$$ Token
+
+Tokenize method:
+  - English: generally simply use "white space"
+
+================================================================================
+Morphological analysis (Text normalization)
+
+Tokens --are converted into--> more general form
+And you get "reduced number of tokens" to get more analysis efficiency
+
+- Example
+cars ---> car
+car  ---> car
+
+stopped ---> stop
+stop ---> stop
+
+- Do "folding" (lower case)
+Hello ---> hello
+hello ---> hello
+
+- Do "stemming"
+Convert "word" into "short format"
+
+- Do "lemmatization"
+Convert "word" into the basic form which has POS information
+
+================================================================================
+/home/young/Pictures/2019_06_03_12:06:23.png
+
+================================================================================
+POS tagging
+
+Assing "POS" into each "token"
+
+- Techniques
+  - Decision Trees
+  - Hidden Markov Model
+  - SVM
+
+================================================================================
+NLTK, spaCY perform the step of "sentence spliting, tokenization, lemmatization, POS tagging"
+
+================================================================================
+
+</xmp>
+   </BODY>
+</HTML>
