@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+/* img {
+ width:900px;
+} */
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+
+================================================================================
+https://ratsgo.github.io/natural%20language%20processing/2017/10/22/manning/
+/mnt/1T-5e7/mycodehtml/NLP/Bi_LSTM/Ratsgo/main.html
+
+================================================================================
+Vanilla RNN
+- Weak for gradient vanishing/exploding
+- Why?
+- /home/young/Pictures/2019_06_02_23:52:17.png
+- To find gradient at $$$h_1$$$, you should use chain rule
+
+================================================================================
+How to solve "gradient vanishing/exploding"?
+
+- LSTM which has "gates"
+- "gates" adds "previous information" and "current information"
+- Then, gradient can flow well
+
+================================================================================
+Vanilla Seq2Seq
+
+/home/young/Pictures/2019_06_02_23:57:02.png
+
+- Encoder: creates vectors from input sentence
+- Decoder: converts vector to target sentence
+- Encoder and Decoder: LSTM
+
+================================================================================
+Weakness of vanilla Seq2Seq
+
+- Longer input sentence
+- Deeper encoder
+- Encoder should compress "too much of information"
+- Encoder causes "loss of information"
+
+- Most meaningful input data is paid attention to by using attention mechanism
+
+================================================================================
+- Bidirectional network: sees input sentence from L to R, from R to L
+
+================================================================================
+BiLSTM+LSTM cell in decoder+attention
+
+/home/young/Pictures/2019_06_03_00:02:43.png
+
+================================================================================
+The reason that Bi-LSTM has good performance
+- End to end learning: when reducing loss wrt predicted output,
+all trainable params are updated at the same time
+- Use distributed representation:
+Relationship between "word" and "phrase" in inserted into word-vector
+- Use LSTM, attention: 
+even with long sentence, performance doesn't degraded
+
+================================================================================
+Stanford Attentive Reader (2016)
+
+- It finds the "answer" wrt to "given question" in the context of text
+- It uses BiLSTM with attention
+
+================================================================================
+p_vector=Bidirectional_encoder1(text_paragraph)
+q_vector=Bidirectional_encoder2(question)
+
+$$$\alpha_i$$$: attention score of ith word in text_paragraph
+$$$\alpha_i = softmax(q^T W p_i) $$$
+
+================================================================================
+output_vector_o=Decoder(alpha,p)
+
+output_vector_o 
+$$$= alpha_1 p_1 + alpha_2 p_2 + \cdots $$$
+$$$= \sum\limits_{i} \alpha_i p_i$$$
+
+================================================================================
+loss_val=loss_func(output_vector_o,gt)
+
+================================================================================
+/home/young/Pictures/2019_06_03_10:28:41.png
+
+================================================================================
+Stanford Attentive Reader (2017)
+
+- Same with Stanford Attentive Reader (2016)
+- Added part: extracting "paragraph" from the long text
+
+/home/young/Pictures/2019_06_03_10:30:15.png
+
+================================================================================
+Copy augmented S2S (2017)
+
+- Copy words which have high attention score $$$\alpha$$$
+- Paste copied words into "decoder"
+
+out_vec_enco,words_with_high_attention_scores=Copy_augmented_S2S_2017_Encoder(question)
+out_sentence=Copy_augmented_S2S_2017_Decoder(out_vec_enco,words_with_high_attention_scores)
+
+================================================================================
+/home/young/Pictures/2019_06_03_10:33:48.png
+
+Question
+/home/young/Pictures/2019_06_03_10:34:02.png
+
+Italian has high attention score
+Italian is pasted into decoder_sentence
+
+================================================================================
+Tree based models (2015)
+
+LSTM
+/home/young/Pictures/2019_06_03_10:36:50.png
+
+Tree based model
+/home/young/Pictures/2019_06_03_10:37:02.png
+
+================================================================================
+Dozat&Manning(2017) applies "BiLSTM with attention" into dependency parsing
+
+/home/young/Pictures/2019_06_03_10:38:05.png
+
+</xmp>
+   </BODY>
+</HTML>
