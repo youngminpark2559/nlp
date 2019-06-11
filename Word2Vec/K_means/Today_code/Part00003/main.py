@@ -456,4 +456,3 @@ forest=RandomForestClassifier(n_estimators=100)
 forest=forest.fit(train_centroids,train["sentiment"])
 
 result=forest.predict(test_centroids)
-
