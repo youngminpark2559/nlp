@@ -54,22 +54,22 @@ MathJax.Hub.Config({
 https://www.youtube.com/watch?v=WsQLdu2JMgI
 
 ================================================================================
-/home/young/Pictures/2019_06_15_21:18:01.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_21:18:01.png' alt=''><xmp>
 
 - Encoder-decoder architecture (or seq2seq architecture)
 
 ================================================================================
-/home/young/Pictures/2019_06_15_21:18:35.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_21:18:35.png' alt=''><xmp>
 
 - Encoder part creates "context vector"
 
 ================================================================================
-/home/young/Pictures/2019_06_15_21:19:09.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_21:19:09.png' alt=''><xmp>
 
 - Docoder part creates "output"
 
 ================================================================================
-/home/young/Pictures/2019_06_15_21:19:40.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_21:19:40.png' alt=''><xmp>
 
 Context vector is fixed size vector
 
@@ -79,10 +79,10 @@ context vector can't hold all information in the short vector
 ================================================================================
 How to overcome above problem?
 
-/home/young/Pictures/2019_06_15_21:21:18.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_21:21:18.png' alt=''><xmp>
 
 - All states from all RNN cells
-/home/young/Pictures/2019_06_15_21:21:34.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_21:21:34.png' alt=''><xmp>
 
 - Dynamically, decoder creates "context vector"
 using all states
@@ -90,73 +90,72 @@ using all states
 ================================================================================
 Attention mechanism in seq2seq
 
-/home/young/Pictures/2019_06_15_22:12:57.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:12:57.png' alt=''><xmp>
 
 - Use FC, tanh to get scores of each state in each RNN cell
-/home/young/Pictures/2019_06_15_22:13:21.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:13:21.png' alt=''><xmp>
 
 - Use softmax and get probability value as "attention weight"
-/home/young/Pictures/2019_06_15_22:14:28.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:14:28.png' alt=''><xmp>
 
 - I: 90%, love: 0%, you: 10% are focused
 
 - Create context_vector_1 (cv1)
-/home/young/Pictures/2019_06_15_22:15:39.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:15:39.png' alt=''><xmp>
 
 - "cv1" and "<start> token" are passed into the first RNN cell in decoder 
 
 - After performing the first decoder RNN cell,
 output (Nan) is created
 and dh1 (decoder_hidden_1) is created
-/home/young/Pictures/2019_06_15_22:19:07.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:19:07.png' alt=''><xmp>
 
 ================================================================================
 Second step
-/home/young/Pictures/2019_06_15_22:20:28.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:20:28.png' alt=''><xmp>
 
 - Note that this part
-/home/young/Pictures/2019_06_15_22:20:52.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:20:52.png' alt=''><xmp>
 
 - Note that these 3 things (encoder RNN cell outputs) are always used
-/home/young/Pictures/2019_06_15_22:21:10.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:21:10.png' alt=''><xmp>
 
 - 90% attention weight on "you"
-/home/young/Pictures/2019_06_15_22:21:49.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:21:49.png' alt=''><xmp>
 
 ================================================================================
-/home/young/Pictures/2019_06_15_22:31:03.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:31:03.png' alt=''><xmp>
 
-/home/young/Pictures/2019_06_15_22:31:18.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:31:18.png' alt=''><xmp>
 
 - Which hidden state should be attention?
-/home/young/Pictures/2019_06_15_22:31:37.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:31:37.png' alt=''><xmp>
 
 ================================================================================
-/home/young/Pictures/2019_06_15_22:32:18.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:32:18.png' alt=''><xmp>
 
 ================================================================================
 Teacher forcing
 
 - Decoder cell creates "wrong prediction"
-/home/young/Pictures/2019_06_15_22:44:37.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:44:37.png' alt=''><xmp>
 
 - "Wrong prediction" causes "next wrong prediction"
-/home/young/Pictures/2019_06_15_22:45:10.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:45:10.png' alt=''><xmp>
 
-/home/young/Pictures/2019_06_15_22:45:49.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:45:49.png' alt=''><xmp>
 
-/home/young/Pictures/2019_06_15_22:46:10.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:46:10.png' alt=''><xmp>
 
 ================================================================================
 Use "teacher forcing" algorithm
 
 - Pass "true label" than "prediction"
-/home/young/Pictures/2019_06_15_22:46:49.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:46:49.png' alt=''><xmp>
 
-/home/young/Pictures/2019_06_15_22:47:01.png
+</xmp><img src='https://raw.githubusercontent.com/youngminpark2559/nlp/master/Short_tutorials/Seq2Seq/MinSeokHeo/pics/2019_06_15_22:47:01.png' alt=''><xmp>
 
 ================================================================================
-
 
 </xmp>
    </BODY>
