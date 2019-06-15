@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+/* img {
+ width:900px;
+} */
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+
+https://www.youtube.com/watch?v=WsQLdu2JMgI
+
+================================================================================
+/home/young/Pictures/2019_06_15_21:18:01.png
+
+- Encoder-decoder architecture (or seq2seq architecture)
+
+================================================================================
+/home/young/Pictures/2019_06_15_21:18:35.png
+
+- Encoder part creates "context vector"
+
+================================================================================
+/home/young/Pictures/2019_06_15_21:19:09.png
+
+- Docoder part creates "output"
+
+================================================================================
+/home/young/Pictures/2019_06_15_21:19:40.png
+
+Context vector is fixed size vector
+
+So, if sentence becomes too long, 
+context vector can't hold all information in the short vector
+
+================================================================================
+How to overcome above problem?
+
+/home/young/Pictures/2019_06_15_21:21:18.png
+
+- All states from all RNN cells
+/home/young/Pictures/2019_06_15_21:21:34.png
+
+- Dynamically, decoder creates "context vector"
+using all states
+
+================================================================================
+Attention mechanism in seq2seq
+
+/home/young/Pictures/2019_06_15_22:12:57.png
+
+- Use FC, tanh to get scores of each state in each RNN cell
+/home/young/Pictures/2019_06_15_22:13:21.png
+
+- Use softmax and get probability value as "attention weight"
+/home/young/Pictures/2019_06_15_22:14:28.png
+
+- I: 90%, love: 0%, you: 10% are focused
+
+- Create context_vector_1 (cv1)
+/home/young/Pictures/2019_06_15_22:15:39.png
+
+- "cv1" and "<start> token" are passed into the first RNN cell in decoder 
+
+- After performing the first decoder RNN cell,
+output (Nan) is created
+and dh1 (decoder_hidden_1) is created
+/home/young/Pictures/2019_06_15_22:19:07.png
+
+================================================================================
+Second step
+/home/young/Pictures/2019_06_15_22:20:28.png
+
+- Note that this part
+/home/young/Pictures/2019_06_15_22:20:52.png
+
+- Note that these 3 things (encoder RNN cell outputs) are always used
+/home/young/Pictures/2019_06_15_22:21:10.png
+
+- 90% attention weight on "you"
+/home/young/Pictures/2019_06_15_22:21:49.png
+
+================================================================================
+/home/young/Pictures/2019_06_15_22:31:03.png
+
+/home/young/Pictures/2019_06_15_22:31:18.png
+
+- Which hidden state should be attention?
+/home/young/Pictures/2019_06_15_22:31:37.png
+
+================================================================================
+/home/young/Pictures/2019_06_15_22:32:18.png
+
+================================================================================
+Teacher forcing
+
+- Decoder cell creates "wrong prediction"
+/home/young/Pictures/2019_06_15_22:44:37.png
+
+- "Wrong prediction" causes "next wrong prediction"
+/home/young/Pictures/2019_06_15_22:45:10.png
+
+/home/young/Pictures/2019_06_15_22:45:49.png
+
+/home/young/Pictures/2019_06_15_22:46:10.png
+
+================================================================================
+Use "teacher forcing" algorithm
+
+- Pass "true label" than "prediction"
+/home/young/Pictures/2019_06_15_22:46:49.png
+
+/home/young/Pictures/2019_06_15_22:47:01.png
+
+================================================================================
+
+
+</xmp>
+   </BODY>
+</HTML>
