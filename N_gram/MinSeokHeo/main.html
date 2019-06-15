@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+/* img {
+ width:900px;
+} */
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+
+https://www.youtube.com/watch?v=4f9XC8HHluE&t=24s
+
+================================================================================
+n-gram
+- "contiguous sequence" of N number of tokens
+- tokens: word, characters, ...
+
+================================================================================
+1-gram (unigram)
+
+Given sentence: fine thank you
+1-gram in word level: [fine,thank,you]
+1-gram in character level: [f,i,n,e, ,t,h,a,n,k, ,y,o,u]
+
+================================================================================
+2-gram (bigram)
+
+Given sentence: fine thank you
+2-gram in word level: [fine thank,thank you]
+2-gram in character level: [fi,in,ne,e , t,th,ha,an,nk,k , y,yo,ou]
+
+================================================================================
+3-gram (trigram)
+
+Given sentence: fine thank you
+3-gram in word level: [fine thank you]
+3-gram in character level: [fin,ine,ne ,e t, th,tha,han,ank,nk ,k y, yo,you]
+
+================================================================================
+Why you need to use "n-gram"?
+
+- Overcome drawbacks of "Bag Of Words"
+"Bag Of Words" ignores "sequence characteristic of words"
+- n-gram can be used for "next word prediction"
+- n-gram can find "mis-spelling"
+- etc
+
+================================================================================
+Sentence: "machine learning is fun and is not boring"
+
+Bag Of Words:
+words:       machine fun is learning and not boring
+frequency:   1       1   2  1        1   1   1
+
+Drawback1:
+BOW tells "machine" and "learning" than "machine learning"
+
+Drawback2:
+ambiguous location of "not"
+machine learning is not fun and is boring
+= machine learning is fun and is not boring
+= not machine learning is fun and is boring
+...
+
+================================================================================
+2-gram
+
+words: machine learning    learning is    is fun    fun and     and is    is not    not boring
+freq:  1                   1              1         1           1         1         1 
+
+Good catch:
+"machine learning"
+"not boring"
+
+- Contextual represention
+
+================================================================================
+"Naive" next word prediction example
+
+Sentence: how are you doing
+3-gram: [how are you, are you doing]
+
+Sentence: how are you
+3-gram: [how are you]
+
+Sentence: how are they
+3-gram: [how are they]
+
+Above 3-gram sequential cases are trained in NLP model
+
+- Situation: user inputs "how are"
+- Then, what is the next word?
+"how are you" happens 2 times in training memory
+"how are they" happens 1 times in training memory
+- So, next prediction word should be "you"
+
+================================================================================
+naive spell checker by using 2-gram
+
+vocab in vocabulary file:
+quality
+quater
+quit
+
+bigram-frequency table
+bigram    count
+qu        3
+ua        2
+al        1
+li        1
+it        2
+ty        1
+at        1
+te        1
+er        1
+ui        1
+
+- Suppose user type "qwal"
+There is no "qw" in bigram-frequency table
+There is no "wa" in bigram-frequency table
+"qu" happens most often
+"ua" happens second-most often
+
+</xmp>
+   </BODY>
+</HTML>
