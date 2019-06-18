@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>My first HTML document</TITLE>
+      <style rel="stylesheet" type="text/css">
+body {
+ font-size: 20px;
+ 
+ margin-top: 50px;
+    margin-bottom: 50px;
+    margin-right: 80px;
+    margin-left: 100px;
+    
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 80px;
+    padding-left: 80px;
+    
+    line-height:35px;
+}
+/* img {
+ width:900px;
+} */
+</style>
+      <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    "HTML-CSS" : {
+        availableFonts : ["STIX"],
+        preferredFont : "STIX",
+        webFont : "STIX-Web",
+        imageFont : null
+    }
+});
+</script>
+     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js" type="text/javascript">    
+    MathJax.Hub.Config({
+        HTML: ["input/TeX","output/HTML-CSS"],
+        TeX: { extensions: ["AMSmath.js","AMSsymbols.js"], 
+               equationNumbers: { autoNumber: "AMS" } },
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: { inlineMath: [ ['$$$','$$$'] ],
+                   displayMath: [ ['$$$$','$$$$'] ],
+                   processEscapes: true },
+        "HTML-CSS": { availableFonts: ["TeX"],
+                      linebreaks: { automatic: true } }
+    });
+</script>
+   </HEAD>
+   <BODY>
+<xmp>
+
+https://www.yceffort.kr/2018/05/31/Levenshtein-distance/
+
+================================================================================
+Levenshtein Distance:
+- Differences as "insertion", "deletion", "substution" are calculated as "distance"
+- Strings which are compared do not have to be the same length
+
+Hamming Distance:
+- How many words-replacements are needed to make 2 words same
+- 2 words should have same length
+- So, not very useful
+
+Smith-Waterman: 
+- Split word into all possible-length
+- And compare them
+
+Sørensen-Dice Coefficient: 
+- Try to make "groups" from 2 words, to compare 2 words
+
+================================================================================
+Idea of Levenshtein distance
+- To compare "2 words" to see how they are similar
+- you can calculate "distance" which means the steps for making "2 words" same
+- If 2 words are already very similar, small number of steps will be required
+- Steps are composed of "inserting new character", "deleting some character", "substituting some character with other one"
+
+================================================================================
+Let's make "ghost" equal to "toast"
+
+- Step1, substituting g with t: ghost -> thost
+- Step2, substituting h with o: thost -> toost
+- Step3, substituting o with a: toost -> toast
+
+out_dist=Levenshtein_distance("ghost","toast")
+# out_dist: 3
+
+================================================================================
+def Final_Levenshtein_distance():
+  dist_val=get_levenshtein_distance(longer_word,shorter_word)
+
+  final_levenshtein_dist=(longer_word_len-dist_val)/longer_word_len
+  
+  return final_levenshtein_dist
+
+================================================================================
+Usecase of Levenshtein distance
+- Comparison "strings"
+- Comparison "words"
+- Comparison "gene sequence"
+- etc
+
+</xmp>
+   </BODY>
+</HTML>
